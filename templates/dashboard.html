@@ -1,25 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Sentinel | Command Center</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --danger: #f87171; --text: #f8fafc; --text-dim: #94a3b8; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; height: 100vh; }
-        .sidebar { width: 280px; background: var(--card); border-right: 1px solid rgba(255,255,255,0.1); padding: 2rem; display: flex; flex-direction: column; }
-        .nav-link { padding: 12px; border-radius: 8px; color: var(--text-dim); text-decoration: none; margin-bottom: 8px; transition: 0.3s; }
-        .nav-link.active { background: rgba(56, 189, 248, 0.1); color: var(--accent); }
-        .content { flex: 1; padding: 2.5rem; overflow-y: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
-        .role-badge { font-size: 0.7rem; background: var(--accent); color: var(--bg); padding: 4px 12px; border-radius: 99px; font-weight: 600; }
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
-        .alert-table { background: var(--card); border-radius: 16px; padding: 1.5rem; width: 100%; border-collapse: collapse; }
-        th { text-align: left; color: var(--text-dim); font-size: 0.75rem; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        td { padding: 12px; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #38bdf8;
+            --danger: #f87171;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--card);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-link {
+            padding: 12px;
+            border-radius: 8px;
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-bottom: 8px;
+            transition: 0.3s;
+        }
+
+        .nav-link.active {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent);
+        }
+
+        .content {
+            flex: 1;
+            padding: 2.5rem;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .role-badge {
+            font-size: 0.7rem;
+            background: var(--accent);
+            color: var(--bg);
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-weight: 600;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .alert-table {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        td {
+            padding: 12px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
     </style>
 </head>
+
 <body>
     <div class="sidebar">
         <h2 style="color: var(--accent);">Sentinel<span>.FDS</span></h2>
@@ -42,23 +129,100 @@
         </div>
 
         <div class="grid">
-            <div class="stat-card"><span>Total Scanned</span><h2>{{ stats.total_scanned }}</h2></div>
-            <div class="stat-card"><span>ISO 20022 Msg</span><h2>{{ stats.iso_messages }}</h2></div>
-            <div class="stat-card"><span style="color:var(--danger)">High Risk</span><h2 style="color:var(--danger)">{{ stats.high_risk }}</h2></div>
-            <div class="stat-card"><span>Pending Review</span><h2 style="color:var(--accent)">{{ stats.pending_review }}</h2></div>
+            <div class="stat-card"><span>Total Scanned</span>
+                <h2 id="stat_total_scanned">{{ stats.total_scanned }}</h2>
+            </div>
+            <div class="stat-card"><span>ISO 20022 Msg</span>
+                <h2>{{ stats.iso_messages }}</h2>
+            </div>
+            <div class="stat-card"><span style="color:var(--danger)">High Risk</span>
+                <h2 style="color:var(--danger)">{{ stats.high_risk }}</h2>
+            </div>
+            <div class="stat-card"><span>Pending Review</span>
+                <h2 style="color:var(--accent)">{{ stats.pending_review }}</h2>
+            </div>
         </div>
 
         <div style="background: var(--card); padding: 1.5rem; border-radius: 16px;">
-            <h3>Security Events</h3>
-            <table class="alert-table">
-                <thead><tr><th>TIME</th><th>TYPE</th><th>DESCRIPTION</th></tr></thead>
+            <h3>Security Events (Live Feed)</h3>
+            <table class="alert-table" id="alertsTable">
+                <thead>
+                    <tr>
+                        <th>TIME</th>
+                        <th>TYPE</th>
+                        <th>RISK SCORE</th>
+                        <th>DESCRIPTION</th>
+                    </tr>
+                </thead>
                 <tbody>
-                    {% for alert in alerts %}
-                    <tr><td>{{ alert.time }}</td><td>{{ alert.type }}</td><td>{{ alert.desc }}</td></tr>
-                    {% endfor %}
+                    <!-- Alerts will be injected here by Socket.IO -->
                 </tbody>
             </table>
         </div>
     </div>
+
+    <!-- SOCKET.IO CLIENT SCRIPT -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Adjust connect URL based on your deployment. Empty connects to the host that served the page.
+            const socket = io();
+
+            socket.on('connect', function () {
+                console.log('Connected to Sentinel FDS via WebSockets!');
+            });
+
+            socket.on('new_fraud_alert', function (data) {
+                console.log('Received Alert:', data);
+
+                // --- Update Main Stats (Visual Simulation) ---
+                let totalScannedElem = document.getElementById("stat_total_scanned");
+                if (totalScannedElem) {
+                    let current = parseInt(totalScannedElem.innerText.replace(/,/g, '')) || 0;
+                    totalScannedElem.innerText = (current + 1).toLocaleString();
+                }
+
+                // --- Inject Row into Table ---
+                const tbody = document.querySelector('#alertsTable tbody');
+                const row = document.createElement('tr');
+
+                // Highlight row briefly based on risk
+                row.style.transition = "background-color 1s ease";
+                if (data.status === 'BLOCKED') {
+                    row.style.backgroundColor = "rgba(248, 113, 113, 0.2)"; // Danger red hue
+                } else if (data.status === 'FLAGGED_FOR_REVIEW') {
+                    row.style.backgroundColor = "rgba(56, 189, 248, 0.2)"; // Warning blue hue
+                }
+
+                const now = new Date();
+                const timeStr = now.getHours().toString().padStart(2, '0') + ":" +
+                    now.getMinutes().toString().padStart(2, '0') + ":" +
+                    now.getSeconds().toString().padStart(2, '0');
+
+                row.innerHTML = `
+                    <td>${timeStr}</td>
+                    <td style="color: ${data.status === 'BLOCKED' ? 'var(--danger)' : 'var(--accent)'}; font-weight: bold;">
+                        ${data.type}
+                    </td>
+                    <td>${data.score || 0}</td>
+                    <td>[${data.tx_id}] ${data.desc}</td>
+                `;
+
+                // Insert at the top of the table
+                tbody.insertBefore(row, tbody.firstChild);
+
+                // Remove highlight after 2 seconds
+                setTimeout(() => {
+                    row.style.backgroundColor = "transparent";
+                }, 2000);
+
+                // Optional: keep only last 50 alerts in UI to prevent memory leak
+                if (tbody.children.length > 50) {
+                    tbody.removeChild(tbody.lastChild);
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>

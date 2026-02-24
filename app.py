@@ -3,10 +3,39 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from arango import ArangoClient
 from werkzeug.security import check_password_hash
 from functools import wraps
+from flask_socketio import SocketIO
+from database.redis_client import get_redis_client
+import json
 
 app = Flask(__name__)
 # Gunakan key statis dulu agar session gak reset tiap kali venv restart
 app.secret_key = 'sentinel_dev_key_2026'
+
+# --- SOCKET.IO INITIALIZATION ---
+socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*")
+
+# --- REDIS LISTENER ---
+redis_client = get_redis_client()
+
+def background_redis_listener():
+    """ Runs in background, listens for fraud alerts from Redis, pushes to WebSocket """
+    print("[SYSTEM] Starting Redis Background Listener...")
+    if not redis_client:
+        print("[SYSTEM CRITICAL] Redis not available, listener disabled.")
+        return
+
+    pubsub = redis_client.pubsub()
+    pubsub.subscribe('alerts_channel')
+
+    for message in pubsub.listen():
+        if message['type'] == 'message':
+            try:
+                alert_data = json.loads(message['data'])
+                print(f"[WEBSOCKET] Emitting new alert: {alert_data['tx_id']}")
+                # Push data ke semua klien yang connect ke dashboard
+                socketio.emit('new_fraud_alert', alert_data)
+            except Exception as e:
+                print(f"[WEBSOCKET ERROR] Could not emit alert: {e}")
 
 # --- DATABASE INITIALIZATION ---
 client = ArangoClient(hosts='http://127.0.0.1:8529')
@@ -110,4 +139,9 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    # Memulai background thread listener Redis
+    socketio.start_background_task(background_redis_listener)
+    
+    # Menjalankan server melalui SocketIO (membungkus Flask)
+    print("\n[SYSTEM] Sentinel FDS starting via SocketIO on port 5000...")
+    socketio.run(app, host='127.0.0.1', port=5000, debug=True, use_reloader=False)
