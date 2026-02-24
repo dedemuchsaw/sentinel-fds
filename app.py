@@ -6,6 +6,10 @@ from functools import wraps
 from flask_socketio import SocketIO
 from database.redis_client import get_redis_client
 import json
+import uuid
+import datetime
+import random
+from engine.pipeline import process_transaction
 
 app = Flask(__name__)
 # Gunakan key statis dulu agar session gak reset tiap kali venv restart
@@ -109,6 +113,24 @@ def auth():
         flash("Connectivity issue with the Auth Engine.")
 
     return redirect(url_for('login'))
+
+@app.route('/api/simulate', methods=['POST'])
+@login_required
+def api_simulate():
+    """Manual trigger for testing the Real-time Dashboard interactivity."""
+    accounts = ['ACC-101', 'ACC-202', 'ACC-303', 'ACC-999']
+    now = datetime.datetime.now()
+    tx_data = {
+        "id": f"TX-{str(uuid.uuid4())[:8].upper()}",
+        "account_id": random.choice(accounts),
+        "amount": random.randint(10000, 2000000),  # Random amount to trigger AI sometimes
+        "time": now.strftime("%H:%M:%S")
+    }
+    
+    # Process it directly in the pipeline
+    result = process_transaction(tx_data)
+    
+    return {"status": "success", "tx_id": tx_data['id'], "result": result}
 
 @app.route('/dashboard')
 @login_required

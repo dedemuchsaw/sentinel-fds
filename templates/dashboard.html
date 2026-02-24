@@ -121,9 +121,19 @@
 
     <div class="content">
         <div class="header">
-            <div>
-                <h1 style="margin:0;">Sentinel Dashboard</h1>
-                <p style="color: var(--text-dim);">Operator: <strong>{{ name }}</strong></p>
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div>
+                    <h1 style="margin:0;">Sentinel Dashboard</h1>
+                    <p style="color: var(--text-dim);">Operator: <strong>{{ name }}</strong></p>
+                </div>
+                <!-- Connection Status Indicator -->
+                <div
+                    style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 99px;">
+                    <div id="status-dot"
+                        style="width: 10px; height: 10px; border-radius: 50%; background: var(--danger); transition: 0.3s; box-shadow: 0 0 8px var(--danger);">
+                    </div>
+                    <span id="status-text" style="font-size: 0.8rem; color: var(--text-dim);">Connecting...</span>
+                </div>
             </div>
             <div class="role-badge">{{ roles[0] | upper if roles else 'NO ROLE' }}</div>
         </div>
@@ -144,7 +154,13 @@
         </div>
 
         <div style="background: var(--card); padding: 1.5rem; border-radius: 16px;">
-            <h3>Security Events (Live Feed)</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;">Security Events (Live Feed)</h3>
+                <button onclick="triggerSimulate()"
+                    style="background: var(--accent); color: var(--bg); border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: 0.2s;">
+                    + Simulate Transaction
+                </button>
+            </div>
             <table class="alert-table" id="alertsTable">
                 <thead>
                     <tr>
@@ -164,42 +180,63 @@
     <!-- SOCKET.IO CLIENT SCRIPT -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Adjust connect URL based on your deployment. Empty connects to the host that served the page.
-            const socket = io();
+        // Adjust connect URL based on your deployment. Empty connects to the host that served the page.
+        // Fallback to polling if websocket is blocked by proxies (like Nginx)
+        const socket = io({ transports: ['websocket', 'polling'] });
 
-            socket.on('connect', function () {
-                console.log('Connected to Sentinel FDS via WebSockets!');
-            });
+        socket.on('connect', function () {
+            console.log('Connected to Sentinel FDS via WebSockets!');
+            const dot = document.getElementById('status-dot');
+            dot.style.background = '#4ade80'; // Tailwind green-400
+            dot.style.boxShadow = '0 0 8px #4ade80';
+            document.getElementById('status-text').innerText = 'Connected (Real-time)';
+        });
 
-            socket.on('new_fraud_alert', function (data) {
-                console.log('Received Alert:', data);
+        socket.on('disconnect', function () {
+            console.log('Disconnected!');
+            const dot = document.getElementById('status-dot');
+            dot.style.background = 'var(--danger)';
+            dot.style.boxShadow = '0 0 8px var(--danger)';
+            document.getElementById('status-text').innerText = 'Disconnected';
+        });
 
-                // --- Update Main Stats (Visual Simulation) ---
-                let totalScannedElem = document.getElementById("stat_total_scanned");
-                if (totalScannedElem) {
-                    let current = parseInt(totalScannedElem.innerText.replace(/,/g, '')) || 0;
-                    totalScannedElem.innerText = (current + 1).toLocaleString();
-                }
+        function triggerSimulate() {
+            fetch('/api/simulate', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("Mock Transaction Triggered", data);
+                })
+                .catch(err => console.error("Error triggering mock transaction", err));
+        }
 
-                // --- Inject Row into Table ---
-                const tbody = document.querySelector('#alertsTable tbody');
-                const row = document.createElement('tr');
+        socket.on('new_fraud_alert', function (data) {
+            console.log('Received Alert:', data);
 
-                // Highlight row briefly based on risk
-                row.style.transition = "background-color 1s ease";
-                if (data.status === 'BLOCKED') {
-                    row.style.backgroundColor = "rgba(248, 113, 113, 0.2)"; // Danger red hue
-                } else if (data.status === 'FLAGGED_FOR_REVIEW') {
-                    row.style.backgroundColor = "rgba(56, 189, 248, 0.2)"; // Warning blue hue
-                }
+            // --- Update Main Stats (Visual Simulation) ---
+            let totalScannedElem = document.getElementById("stat_total_scanned");
+            if (totalScannedElem) {
+                let current = parseInt(totalScannedElem.innerText.replace(/,/g, '')) || 0;
+                totalScannedElem.innerText = (current + 1).toLocaleString();
+            }
 
-                const now = new Date();
-                const timeStr = now.getHours().toString().padStart(2, '0') + ":" +
-                    now.getMinutes().toString().padStart(2, '0') + ":" +
-                    now.getSeconds().toString().padStart(2, '0');
+            // --- Inject Row into Table ---
+            const tbody = document.querySelector('#alertsTable tbody');
+            const row = document.createElement('tr');
 
-                row.innerHTML = `
+            // Highlight row briefly based on risk
+            row.style.transition = "background-color 1s ease";
+            if (data.status === 'BLOCKED') {
+                row.style.backgroundColor = "rgba(248, 113, 113, 0.2)"; // Danger red hue
+            } else if (data.status === 'FLAGGED_FOR_REVIEW') {
+                row.style.backgroundColor = "rgba(56, 189, 248, 0.2)"; // Warning blue hue
+            }
+
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2, '0') + ":" +
+                now.getMinutes().toString().padStart(2, '0') + ":" +
+                now.getSeconds().toString().padStart(2, '0');
+
+            row.innerHTML = `
                     <td>${timeStr}</td>
                     <td style="color: ${data.status === 'BLOCKED' ? 'var(--danger)' : 'var(--accent)'}; font-weight: bold;">
                         ${data.type}
@@ -208,20 +245,20 @@
                     <td>[${data.tx_id}] ${data.desc}</td>
                 `;
 
-                // Insert at the top of the table
-                tbody.insertBefore(row, tbody.firstChild);
+            // Insert at the top of the table
+            tbody.insertBefore(row, tbody.firstChild);
 
-                // Remove highlight after 2 seconds
-                setTimeout(() => {
-                    row.style.backgroundColor = "transparent";
-                }, 2000);
+            // Remove highlight after 2 seconds
+            setTimeout(() => {
+                row.style.backgroundColor = "transparent";
+            }, 2000);
 
-                // Optional: keep only last 50 alerts in UI to prevent memory leak
-                if (tbody.children.length > 50) {
-                    tbody.removeChild(tbody.lastChild);
-                }
-            });
+            // Optional: keep only last 50 alerts in UI to prevent memory leak
+            if (tbody.children.length > 50) {
+                tbody.removeChild(tbody.lastChild);
+            }
         });
+
     </script>
 </body>
 
