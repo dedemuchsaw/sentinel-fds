@@ -1,0 +1,76 @@
+import os
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from arango import ArangoClient
+from werkzeug.security import check_password_hash
+from functools import wraps
+
+app = Flask(__name__)
+app.secret_key = 'GANTI_INI_DENGAN_RANDOM_STRING_YANG_KUAT'
+
+# 1. Koneksi Database
+client = ArangoClient(hosts='http://localhost:8529')
+db = client.db('sentinel_fds', username='root', password='123123#')
+
+# 2. Decorator untuk Proteksi Halaman berdasarkan Role
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# 3. Route Login
+@app.route('/')
+def login():
+    if 'user' in session:
+        return redirect(url_for('dashboard'))
+    return render_template('login.html')
+
+@app.route('/auth', methods=['POST'])
+def auth():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    # Cari user di ArangoDB
+    user = db.collection('users').get(f'admin_{username}') # Sesuai key di setup_rbac.py
+
+    if user and check_password_hash(user['password'], password):
+        # Ambil Role menggunakan Graph Query (AQL)
+        # Mencari role yang terhubung ke user via edge 'has_role'
+        query = """
+        FOR r IN 1..1 OUTBOUND @user_id has_role
+            RETURN r._key
+        """
+        cursor = db.aql.execute(query, bind_vars={'user_id': user['_id']})
+        roles = [doc for doc in cursor]
+
+        # Simpan di Session
+        session['user'] = username
+        session['full_name'] = user.get('full_name')
+        session['roles'] = roles
+        
+        return redirect(url_for('dashboard'))
+    
+    flash("Akses ditolak. Periksa kembali kredensial Anda.")
+    return redirect(url_for('login'))
+
+# 4. Route Dashboard (Multi-Role)
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return f"""
+    <h1>Sentinel.FDS Dashboard</h1>
+    <p>Welcome, {session['full_name']}!</p>
+    <p>Your Roles: {', '.join(session['roles'])}</p>
+    <a href='/logout'>Logout</a>
+    """
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=5000, debug=True)
+#client = ArangoClient(hosts='http://localhost:8529', http_client_kwargs={'timeout': 5})
