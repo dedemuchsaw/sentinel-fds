@@ -1,266 +1,181 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Sentinel | Command Center</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --accent: #38bdf8;
-            --danger: #f87171;
-            --text: #f8fafc;
-            --text-dim: #94a3b8;
-        }
+{% block title %}Sentinel | Dashboard Overview{% endblock %}
+{% block breadcrumb %}Dashboard Overview{% endblock %}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            margin: 0;
-            display: flex;
-            height: 100vh;
-        }
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-slate-900 mb-2">Dashboard</h1>
+    <p class="text-slate-500">Real-time fraud detection insights and analytics</p>
+</div>
 
-        .sidebar {
-            width: 280px;
-            background: var(--card);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-link {
-            padding: 12px;
-            border-radius: 8px;
-            color: var(--text-dim);
-            text-decoration: none;
-            margin-bottom: 8px;
-            transition: 0.3s;
-        }
-
-        .nav-link.active {
-            background: rgba(56, 189, 248, 0.1);
-            color: var(--accent);
-        }
-
-        .content {
-            flex: 1;
-            padding: 2.5rem;
-            overflow-y: auto;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3rem;
-        }
-
-        .role-badge {
-            font-size: 0.7rem;
-            background: var(--accent);
-            color: var(--bg);
-            padding: 4px 12px;
-            border-radius: 99px;
-            font-weight: 600;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--card);
-            padding: 1.5rem;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .alert-table {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 1.5rem;
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            text-align: left;
-            color: var(--text-dim);
-            font-size: 0.75rem;
-            padding: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        td {
-            padding: 12px;
-            font-size: 0.9rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-    </style>
-</head>
-
-<body>
-    <div class="sidebar">
-        <h2 style="color: var(--accent);">Sentinel<span>.FDS</span></h2>
-        <a href="/dashboard" class="nav-link active">Dashboard Overview</a>
-        <a href="/investigation" class="nav-link">Investigation Lab</a>
-        {% if 'auditor' in roles or 'super_admin' in roles %}
-        <a href="/compliance" class="nav-link">Compliance Audit</a>
-        {% endif %}
-        <a href="/engine_config" class="nav-link">Rule & ML Config</a>
-        <div style="flex:1"></div>
-        <a href="/logout" class="nav-link" style="color: var(--danger);">Logout Session</a>
-    </div>
-
-    <div class="content">
-        <div class="header">
-            <div style="display: flex; align-items: center; gap: 1.5rem;">
-                <div>
-                    <h1 style="margin:0;">Sentinel Dashboard</h1>
-                    <p style="color: var(--text-dim);">Operator: <strong>{{ name }}</strong></p>
-                </div>
-                <!-- Connection Status Indicator -->
-                <div
-                    style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 99px;">
-                    <div id="status-dot"
-                        style="width: 10px; height: 10px; border-radius: 50%; background: var(--danger); transition: 0.3s; box-shadow: 0 0 8px var(--danger);">
-                    </div>
-                    <span id="status-text" style="font-size: 0.8rem; color: var(--text-dim);">Connecting...</span>
-                </div>
-            </div>
-            <div class="role-badge">{{ roles[0] | upper if roles else 'NO ROLE' }}</div>
-        </div>
-
-        <div class="grid">
-            <div class="stat-card"><span>Total Scanned</span>
-                <h2 id="stat_total_scanned">{{ stats.total_scanned }}</h2>
-            </div>
-            <div class="stat-card"><span>ISO 20022 Msg</span>
-                <h2>{{ stats.iso_messages }}</h2>
-            </div>
-            <div class="stat-card"><span style="color:var(--danger)">High Risk</span>
-                <h2 style="color:var(--danger)">{{ stats.high_risk }}</h2>
-            </div>
-            <div class="stat-card"><span>Pending Review</span>
-                <h2 style="color:var(--accent)">{{ stats.pending_review }}</h2>
-            </div>
-        </div>
-
-        <div style="background: var(--card); padding: 1.5rem; border-radius: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3 style="margin: 0;">Security Events (Live Feed)</h3>
-                <button onclick="triggerSimulate()"
-                    style="background: var(--accent); color: var(--bg); border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: 0.2s;">
-                    + Simulate Transaction
-                </button>
-            </div>
-            <table class="alert-table" id="alertsTable">
-                <thead>
-                    <tr>
-                        <th>TIME</th>
-                        <th>TYPE</th>
-                        <th>RISK SCORE</th>
-                        <th>DESCRIPTION</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Alerts will be injected here by Socket.IO -->
-                </tbody>
-            </table>
+<!-- Filters -->
+<div class="flex gap-6 mb-8 items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+    <div class="flex items-center gap-3">
+        <span class="text-sm font-semibold text-slate-700">Category:</span>
+        <div class="flex items-center justify-between border rounded-lg px-4 py-2 w-64 bg-slate-50 cursor-pointer">
+            <span class="text-sm text-slate-600">All Categories</span>
+            <i data-lucide="chevron-down" class="h-4 w-4 text-slate-400"></i>
         </div>
     </div>
 
-    <!-- SOCKET.IO CLIENT SCRIPT -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
-    <script>
-        // Adjust connect URL based on your deployment. Empty connects to the host that served the page.
-        // Fallback to polling if websocket is blocked by proxies (like Nginx)
-        const socket = io({ transports: ['websocket', 'polling'] });
+    <div class="flex items-center gap-3">
+        <span class="text-sm font-semibold text-slate-700">Date Range:</span>
+        <div class="flex items-center gap-3 border rounded-lg px-4 py-2 bg-slate-50 cursor-pointer">
+            <span class="text-sm text-slate-600">2026-02-18 &rarr; 2026-03-18</span>
+            <i data-lucide="calendar" class="h-4 w-4 text-slate-400"></i>
+        </div>
+    </div>
+</div>
 
-        socket.on('connect', function () {
-            console.log('Connected to Sentinel FDS via WebSockets!');
-            const dot = document.getElementById('status-dot');
-            dot.style.background = '#4ade80'; // Tailwind green-400
-            dot.style.boxShadow = '0 0 8px #4ade80';
-            document.getElementById('status-text').innerText = 'Connected (Real-time)';
-        });
+<!-- Stats Grid -->
+<div class="grid grid-cols-4 gap-6 mb-8">
+    <!-- Card 1 -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+        <p class="text-sm font-medium text-slate-500 mb-4">Total Scanned</p>
+        <div class="flex items-center gap-4">
+            <div class="bg-blue-50 p-3 rounded-lg">
+                <i data-lucide="activity" class="h-8 w-8 text-blue-500"></i>
+            </div>
+            <div>
+                <h2 class="text-3xl font-bold text-slate-900" id="stat_total_scanned">{{ stats.total_scanned }}</h2>
+                <p class="text-xs text-blue-500 font-medium mt-1">Live Processing</p>
+            </div>
+        </div>
+    </div>
 
-        socket.on('disconnect', function () {
-            console.log('Disconnected!');
-            const dot = document.getElementById('status-dot');
-            dot.style.background = 'var(--danger)';
-            dot.style.boxShadow = '0 0 8px var(--danger)';
-            document.getElementById('status-text').innerText = 'Disconnected';
-        });
+    <!-- Card 2 -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+        <p class="text-sm font-medium text-slate-500 mb-4">ISO 20022 Messages</p>
+        <div class="flex items-center gap-4">
+            <div class="bg-indigo-50 p-3 rounded-lg">
+                <i data-lucide="file-json" class="h-8 w-8 text-indigo-400"></i>
+            </div>
+            <div>
+                <h2 class="text-3xl font-bold text-slate-900">{{ stats.iso_messages }}</h2>
+                <p class="text-xs text-blue-500 font-medium mt-1">Parsed & Stored</p>
+            </div>
+        </div>
+    </div>
 
-        function triggerSimulate() {
-            fetch('/api/simulate', { method: 'POST' })
-                .then(res => res.json())
-                .then(data => {
-                    console.log("Mock Transaction Triggered", data);
-                })
-                .catch(err => console.error("Error triggering mock transaction", err));
+    <!-- Card 3 -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+        <p class="text-sm font-medium text-slate-500 mb-4">High Risk Alerts</p>
+        <div class="flex items-center gap-4">
+            <div class="bg-rose-50 p-3 rounded-lg">
+                <i data-lucide="bell-ring" class="h-8 w-8 text-rose-500"></i>
+            </div>
+            <div>
+                <h2 class="text-3xl font-bold text-rose-600">{{ stats.high_risk }}</h2>
+                <p class="text-xs text-rose-500 font-medium mt-1">Needs Attention</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+        <p class="text-sm font-medium text-slate-500 mb-4">Pending Review</p>
+        <div class="flex items-center gap-4">
+            <div class="bg-amber-50 p-3 rounded-lg">
+                <i data-lucide="clock" class="h-8 w-8 text-amber-500"></i>
+            </div>
+            <div>
+                <h2 class="text-3xl font-bold text-amber-600">{{ stats.pending_review }}</h2>
+                <p class="text-xs text-amber-500 font-medium mt-1">Awaiting Action</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Real-time Alerts Panel -->
+<div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 min-h-[400px]">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="font-semibold text-slate-900 flex items-center gap-2">
+            Security Events
+            <span class="relative flex h-3 w-3 inline-block ml-2">
+                <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+            </span>
+        </h3>
+        <button onclick="triggerSimulate()"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:ring-4 focus:ring-blue-100 flex items-center gap-2">
+            <i data-lucide="play" class="h-4 w-4"></i> Simulate Transaction
+        </button>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse" id="alertsTable">
+            <thead>
+                <tr class="border-b border-slate-200">
+                    <th class="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Time</th>
+                    <th class="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Alert Type</th>
+                    <th class="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Risk Score</th>
+                    <th class="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Description</th>
+                </tr>
+            </thead>
+            <tbody class="text-sm divide-y divide-slate-100">
+                <!-- Alerts will be injected here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function triggerSimulate() {
+        fetch('/api/simulate', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => console.log("Mock Transaction Triggered", data))
+            .catch(err => console.error("Error triggering mock transaction", err));
+    }
+
+    socket.on('new_fraud_alert', function (data) {
+        console.log('Received Alert:', data);
+
+        let totalScannedElem = document.getElementById("stat_total_scanned");
+        if (totalScannedElem) {
+            let current = parseInt(totalScannedElem.innerText.replace(/,/g, '')) || 0;
+            totalScannedElem.innerText = (current + 1).toLocaleString();
         }
 
-        socket.on('new_fraud_alert', function (data) {
-            console.log('Received Alert:', data);
+        const tbody = document.querySelector('#alertsTable tbody');
+        const row = document.createElement('tr');
 
-            // --- Update Main Stats (Visual Simulation) ---
-            let totalScannedElem = document.getElementById("stat_total_scanned");
-            if (totalScannedElem) {
-                let current = parseInt(totalScannedElem.innerText.replace(/,/g, '')) || 0;
-                totalScannedElem.innerText = (current + 1).toLocaleString();
-            }
+        const isBlocked = data.status === 'BLOCKED';
+        row.className = `transition-colors duration-1000 ${isBlocked ? 'bg-rose-50' : 'bg-blue-50'}`;
 
-            // --- Inject Row into Table ---
-            const tbody = document.querySelector('#alertsTable tbody');
-            const row = document.createElement('tr');
+        const now = new Date();
+        const timeStr = now.getHours().toString().padStart(2, '0') + ":" +
+            now.getMinutes().toString().padStart(2, '0') + ":" +
+            now.getSeconds().toString().padStart(2, '0');
 
-            // Highlight row briefly based on risk
-            row.style.transition = "background-color 1s ease";
-            if (data.status === 'BLOCKED') {
-                row.style.backgroundColor = "rgba(248, 113, 113, 0.2)"; // Danger red hue
-            } else if (data.status === 'FLAGGED_FOR_REVIEW') {
-                row.style.backgroundColor = "rgba(56, 189, 248, 0.2)"; // Warning blue hue
-            }
+        row.innerHTML = `
+            <td class="py-3 px-4 whitespace-nowrap text-slate-500 font-mono text-xs">${timeStr}</td>
+            <td class="py-3 px-4 font-semibold ${isBlocked ? 'text-rose-600' : 'text-blue-600'}">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="${isBlocked ? 'alert-triangle' : 'info'}" class="h-4 w-4"></i>
+                    ${data.type}
+                </div>
+            </td>
+            <td class="py-3 px-4">
+                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${isBlocked ? 'bg-rose-100 text-rose-800' : 'bg-blue-100 text-blue-800'}">
+                    ${data.score || 0}
+                </span>
+            </td>
+            <td class="py-3 px-4 text-slate-600">
+                <span class="font-mono text-xs text-slate-400 mr-2">[${data.tx_id}]</span>
+                ${data.desc}
+            </td>
+        `;
 
-            const now = new Date();
-            const timeStr = now.getHours().toString().padStart(2, '0') + ":" +
-                now.getMinutes().toString().padStart(2, '0') + ":" +
-                now.getSeconds().toString().padStart(2, '0');
+        tbody.insertBefore(row, tbody.firstChild);
+        lucide.createIcons(); // render icons inside the new row
 
-            row.innerHTML = `
-                    <td>${timeStr}</td>
-                    <td style="color: ${data.status === 'BLOCKED' ? 'var(--danger)' : 'var(--accent)'}; font-weight: bold;">
-                        ${data.type}
-                    </td>
-                    <td>${data.score || 0}</td>
-                    <td>[${data.tx_id}] ${data.desc}</td>
-                `;
+        setTimeout(() => { row.className = "transition-colors duration-1000 hover:bg-slate-50"; }, 2000);
 
-            // Insert at the top of the table
-            tbody.insertBefore(row, tbody.firstChild);
-
-            // Remove highlight after 2 seconds
-            setTimeout(() => {
-                row.style.backgroundColor = "transparent";
-            }, 2000);
-
-            // Optional: keep only last 50 alerts in UI to prevent memory leak
-            if (tbody.children.length > 50) {
-                tbody.removeChild(tbody.lastChild);
-            }
-        });
-
-    </script>
-</body>
-
-</html>
+        if (tbody.children.length > 20) { tbody.removeChild(tbody.lastChild); }
+    });
+</script>
+{% endblock %}

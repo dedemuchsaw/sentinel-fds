@@ -1,106 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Sentinel | Compliance Audit</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --accent: #38bdf8;
-            --danger: #f87171;
-            --text: #f8fafc;
-            --text-dim: #94a3b8;
-        }
+{% block title %}Sentinel | Compliance Audit{% endblock %}
+{% block breadcrumb %}Compliance Audit{% endblock %}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            margin: 0;
-            display: flex;
-            height: 100vh;
-        }
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-slate-900 mb-2">Compliance Audit</h1>
+    <p class="text-slate-500">Regulatory Reports and ISO 20022 Audit Trail</p>
+</div>
 
-        .sidebar {
-            width: 280px;
-            background: var(--card);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-link {
-            padding: 12px;
-            border-radius: 8px;
-            color: var(--text-dim);
-            text-decoration: none;
-            margin-bottom: 8px;
-            transition: 0.3s;
-        }
-
-        .nav-link.active {
-            background: rgba(56, 189, 248, 0.1);
-            color: var(--accent);
-        }
-
-        .content {
-            flex: 1;
-            padding: 2.5rem;
-            overflow-y: auto;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3rem;
-        }
-
-        .role-badge {
-            font-size: 0.7rem;
-            background: var(--accent);
-            color: var(--bg);
-            padding: 4px 12px;
-            border-radius: 99px;
-            font-weight: 600;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="sidebar">
-        <h2 style="color: var(--accent);">Sentinel<span>.FDS</span></h2>
-        <a href="/dashboard" class="nav-link">Dashboard Overview</a>
-        <a href="/investigation" class="nav-link">Investigation Lab</a>
-        {% if 'auditor' in roles or 'super_admin' in roles %}
-        <a href="/compliance" class="nav-link active">Compliance Audit</a>
-        {% endif %}
-        <a href="/engine_config" class="nav-link">Rule & ML Config</a>
-        <div style="flex:1"></div>
-        <a href="/logout" class="nav-link" style="color: var(--danger);">Logout Session</a>
+<div class="bg-white p-12 rounded-xl border border-dashed border-slate-300 text-center shadow-sm">
+    <div class="inline-flex items-center justify-center p-4 bg-indigo-50 rounded-full mb-4">
+        <i data-lucide="file-spreadsheet" class="h-8 w-8 text-indigo-500"></i>
     </div>
-
-    <div class="content">
-        <div class="header">
-            <div style="display: flex; align-items: center; gap: 1.5rem;">
-                <div>
-                    <h1 style="margin:0;">Compliance Audit</h1>
-                    <p style="color: var(--text-dim);">Operator: <strong>{{ name }}</strong></p>
-                </div>
-            </div>
-            <div class="role-badge">{{ roles[0] | upper if roles else 'NO ROLE' }}</div>
-        </div>
-
-        <div
-            style="background: var(--card); padding: 3rem; border-radius: 16px; text-align: center; border: 1px dashed rgba(255,255,255,0.2);">
-            <h3 style="color: var(--text-dim); font-weight: 400;">Regulatory Reports and ISO 20022 Audit Trail</h3>
-            <p style="color: rgba(255,255,255,0.3); font-size: 0.9rem;">Fetching audit logs...</p>
-        </div>
-    </div>
-</body>
-
-</html>
+    <h3 class="text-lg font-medium text-slate-900 mb-2">Fetching audit logs...</h3>
+    <p class="text-sm text-slate-500 max-w-md mx-auto">
+        Generating compliance reports based on historical ISO 20022 transactions and system audit trails.
+    </p>
+</div>
+{% endblock %}

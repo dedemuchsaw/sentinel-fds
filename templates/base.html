@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Sentinel | Command Center{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+
+<body class="bg-slate-50 text-slate-900 flex min-h-screen">
+    <!-- Sidebar -->
+    <div class="w-64 h-screen border-r bg-white flex flex-col fixed left-0 top-0">
+        <div class="p-6 border-b flex items-center gap-2">
+            <i data-lucide="shield-alert" class="h-6 w-6 text-slate-800"></i>
+            <span class="font-bold text-lg tracking-tight">NxGraph</span>
+            <span class="text-[10px] text-slate-500 font-semibold uppercase mt-1">Fraud Analytics</span>
+        </div>
+
+        <div class="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
+            <a href="/dashboard"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors {% if request.path == '/dashboard' %}bg-blue-50 text-blue-600{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                <i data-lucide="layout-dashboard"
+                    class="h-4 w-4 {% if request.path == '/dashboard' %}text-blue-600{% else %}text-slate-400{% endif %}"></i>
+                Dashboard
+            </a>
+            <a href="/investigation"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors {% if request.path == '/investigation' %}bg-blue-50 text-blue-600{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                <i data-lucide="shield-alert"
+                    class="h-4 w-4 {% if request.path == '/investigation' %}text-blue-600{% else %}text-slate-400{% endif %}"></i>
+                Investigation Lab
+            </a>
+            {% if 'auditor' in roles or 'super_admin' in roles %}
+            <a href="/compliance"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors {% if request.path == '/compliance' %}bg-blue-50 text-blue-600{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                <i data-lucide="file-text"
+                    class="h-4 w-4 {% if request.path == '/compliance' %}text-blue-600{% else %}text-slate-400{% endif %}"></i>
+                Compliance Audit
+            </a>
+            {% endif %}
+            <a href="/engine_config"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors {% if request.path == '/engine_config' %}bg-blue-50 text-blue-600{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                <i data-lucide="settings-2"
+                    class="h-4 w-4 {% if request.path == '/engine_config' %}text-blue-600{% else %}text-slate-400{% endif %}"></i>
+                Rule & ML Config
+            </a>
+        </div>
+
+        <div class="p-4 border-t">
+            <a href="/logout"
+                class="flex items-center gap-3 px-4 py-3 w-full text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-rose-600 rounded-lg transition-colors">
+                <i data-lucide="log-out" class="h-4 w-4 text-slate-400"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-64 flex flex-col p-8 bg-slate-50 min-h-screen x-overflow-hidden">
+        <!-- Top Header -->
+        <header class="flex justify-between items-center mb-8">
+            <div class="flex items-center gap-2 text-sm text-slate-500">
+                <span>Home</span>
+                <span>/</span>
+                <span class="font-semibold text-slate-900">{% block breadcrumb %}Dashboard{% endblock %}</span>
+            </div>
+            <div class="flex gap-4 items-center">
+                <div id="connection-badge" class="px-3 py-1 text-xs rounded-full font-bold bg-rose-100 text-rose-700">
+                    Connecting...
+                </div>
+                <div
+                    class="flex items-center gap-3 bg-white px-4 py-2 flex-shrink-0 cursor-pointer rounded-full shadow-sm border hover:bg-slate-50 transition">
+                    <i data-lucide="user-circle" class="h-5 w-5 text-slate-600"></i>
+                    <span class="text-sm font-medium text-slate-700">{{ name }}</span>
+                    <span class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">{{ roles[0] | upper if
+                        roles else 'NO ROLE' }}</span>
+                </div>
+            </div>
+        </header>
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Base Scripts -->
+    <script>
+        lucide.createIcons();
+
+        // Socket.IO Connection Setup
+        const socket = io({ transports: ['websocket', 'polling'] });
+
+        socket.on('connect', function () {
+            console.log('Connected to Sentinel FDS via WebSockets!');
+            const badge = document.getElementById('connection-badge');
+            if (badge) {
+                badge.className = 'px-3 py-1 text-xs rounded-full font-bold bg-emerald-100 text-emerald-700 transition-colors';
+                badge.innerText = 'Engine Connected';
+            }
+        });
+
+        socket.on('disconnect', function () {
+            console.log('Disconnected!');
+            const badge = document.getElementById('connection-badge');
+            if (badge) {
+                badge.className = 'px-3 py-1 text-xs rounded-full font-bold bg-rose-100 text-rose-700 transition-colors';
+                badge.innerText = 'Disconnected';
+            }
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>
