@@ -35,10 +35,9 @@ def is_known_fraud(transaction_data):
     if amount > 50000000 and is_night:
         return True, f"High Amount ({amount}) at Unusual Hour", 85
         
-    # 3. Dummy Watchlist Check (List of risky accounts)
-    # Just an example list. In real-world, populate this list dynamically into a Redis Set
-    watchlist = ['ACC-999', 'ACC-666']
-    if account_id in watchlist:
-        return True, "Account in Watchlist", 99
+    # 3. Dynamic Watchlist Check (List of risky accounts)
+    # Checks directly against a Redis set for zero-latency lookups
+    if redis_client.sismember('watchlist', account_id):
+        return True, "Account in Dynamic Watchlist", 99
 
     return False, "Clean", 0

@@ -110,10 +110,10 @@
 <body>
     <div class="sidebar">
         <h2 style="color: var(--accent);">Sentinel<span>.FDS</span></h2>
-        <a href="#" class="nav-link active">Dashboard Overview</a>
-        <a href="#" class="nav-link">Investigation Lab</a>
+        <a href="/dashboard" class="nav-link active">Dashboard Overview</a>
+        <a href="/investigation" class="nav-link">Investigation Lab</a>
         {% if 'auditor' in roles or 'super_admin' in roles %}
-        <a href="#" class="nav-link">Compliance Audit</a>
+        <a href="/compliance" class="nav-link">Compliance Audit</a>
         {% endif %}
         <div style="flex:1"></div>
         <a href="/logout" class="nav-link" style="color: var(--danger);">Logout Session</a>

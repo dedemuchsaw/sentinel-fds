@@ -155,6 +155,25 @@ def dashboard():
                            stats=stats,
                            alerts=recent_alerts)
 
+@app.route('/investigation')
+@login_required
+def investigation():
+    return render_template('investigation.html',
+                           name=session.get('full_name', 'Security Officer'),
+                           roles=session.get('roles', []))
+
+@app.route('/compliance')
+@login_required
+def compliance():
+    roles = session.get('roles', [])
+    if 'auditor' not in roles and 'super_admin' not in roles:
+        flash("You do not have the required clearance to access Compliance Audit.")
+        return redirect(url_for('dashboard'))
+        
+    return render_template('compliance.html',
+                           name=session.get('full_name', 'Security Officer'),
+                           roles=roles)
+
 @app.route('/logout')
 def logout():
     session.clear()

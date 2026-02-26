@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -113,15 +114,24 @@
         }
 
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="role-badge">{{ roles[0] if roles else 'NO ROLE' }}</div>
+    <div class="role-badge">{{ roles[0] if roles else 'NO ROLE' }}</div>
     <div class="login-card">
         <div class="brand">
             <div class="status-badge">
@@ -130,20 +140,34 @@
             <h1>Sentinel<span>.FDS</span></h1>
             <p>Intelligence-Driven Fraud Prevention</p>
         </div>
-<form action="/auth" method="POST">
-    <div class="form-group">
-        <label>Access Key</label>
-        <input type="text" name="username" placeholder="Your identifier" required>
-    </div>
-    <div class="form-group">
-        <label>Security Token</label>
-        <input type="password" name="password" placeholder="••••••••" required>
-    </div>
-    <button type="submit">
-        Initialize Gateway
-    </button>
-</form>
+
+        <!-- Flash Messages for Errors -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div
+            style="background: rgba(248, 113, 113, 0.1); border: 1px solid var(--danger, #f87171); color: var(--danger, #f87171); padding: 10px; border-radius: 8px; margin-bottom: 1rem; font-size: 0.85rem; text-align: center;">
+            {% for message in messages %}
+            {{ message }}<br>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form action="/auth" method="POST">
+            <div class="form-group">
+                <label>Access Key</label>
+                <input type="text" name="username" placeholder="Your identifier" required>
+            </div>
+            <div class="form-group">
+                <label>Security Token</label>
+                <input type="password" name="password" placeholder="••••••••" required>
+            </div>
+            <button type="submit">
+                Initialize Gateway
+            </button>
+        </form>
     </div>
 
 </body>
+
 </html>

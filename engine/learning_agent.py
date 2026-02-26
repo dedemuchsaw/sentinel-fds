@@ -47,12 +47,28 @@ def detect_behavioral_shift(transaction_data):
     # Update memori jangka pendek (sliding window) di Redis
     recent_transactions = update_window(account_id, transaction_data, window_size=5)
 
-    # Note: For now, we mock the history profile retrieval directly.
-    # In real life, query arango_db with AQL to sum their past week transacitons, etc.
+    # Retrieve the user's historical profile dynamically from ArangoDB
     historical_profile = {
-        "mean_amount": 500000,
+        "mean_amount": 500000, # fallback baseline
         "frequent_locations": ["Jakarta", "Bandung"]
     }
+    
+    if arango_db:
+        try:
+            # Query average transaction amount for this account
+            query = """
+            FOR t IN transactions
+                FILTER t._from == @account
+                COLLECT AGGREGATE mean_amt = AVERAGE(t.amount)
+                RETURN mean_amt
+            """
+            cursor = arango_db.aql.execute(query, bind_vars={'account': f"accounts/{account_id}"})
+            results = [doc for doc in cursor]
+            
+            if results and results[0] is not None:
+                historical_profile["mean_amount"] = float(results[0])
+        except Exception as e:
+            print(f"[ENGINE ERROR] Failed fetching profile from DB: {e}")
     
     features = extract_features(transaction_data, historical_profile, recent_transactions)
     prediction = mock_predict(features)

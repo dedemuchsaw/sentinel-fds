@@ -1,11 +1,17 @@
 import kagglehub
 import pandas as pd
+import json
+import time
+import uuid
 from database.arango_client import get_db
+from database.redis_client import get_redis_client
 
-print("Initializing ArangoDB connection...")
+print("Initializing ArangoDB & Redis connections...")
 db = get_db()
-if not db:
-    print("Failed to connect to ArangoDB. Exiting.")
+redis_client = get_redis_client()
+
+if not db or not redis_client:
+    print("Failed to connect to required databases. Exiting.")
     exit(1)
 
 # Ensure Collections and Graph exist
@@ -72,13 +78,17 @@ def start_ingestion():
     except Exception as e:
          print(f"Error inserting accounts: {e}")
 
-    # Pass 2: Insert transaction edges
-    print("Inserting transaction edges...")
-    edge_docs = []
+    # Pass 2: Insert transaction edges and Stream to Redis
+    print("Inserting transaction edges and streaming to Redis...")
+    
+    success_count = 0
     for index, row in df.iterrows():
-        edge_docs.append({
+        # 1. Prepare Data
+        tx_id = f"TX-{str(uuid.uuid4())[:8].upper()}"
+        tx_data_graph = {
             '_from': f"{ACCOUNTS_COLLECTION}/{row['nameOrig']}",
             '_to': f"{ACCOUNTS_COLLECTION}/{row['nameDest']}",
+            'tx_id': tx_id,
             'step': row['step'],
             'type': row['type'],
             'amount': row['amount'],
@@ -88,14 +98,41 @@ def start_ingestion():
             'newbalanceDest': row['newbalanceDest'],
             'isFraud': row['isFraud'],
             'isFlaggedFraud': row['isFlaggedFraud']
-        })
+        }
         
-    try:
-        # We can batch these if it's too large, but 10k is small enough
-        transactions.insert_many(edge_docs)
-        print(f"Successfully ingested {len(edge_docs)} transactions into ArangoDB!")
-    except Exception as e:
-        print(f"Error inserting transactions: {e}")
+        # 2. Insert Edge to ArangoDB
+        try:
+            transactions.insert(tx_data_graph)
+            success_count += 1
+        except Exception as e:
+            print(f"Error inserting transaction {tx_id}: {e}")
+            continue
+
+        # 3. Stream to Redis for Real-time Engine & Dashboard
+        # Format payload specifically for the Pipeline you built
+        tx_data_stream = {
+            "id": tx_id,
+            "account_id": row['nameOrig'], # We use origin account for velocity check
+            "amount": row['amount'],
+            "time": "12:00:00" # Dummy time since PaySim only has 'step' not actual time
+        }
+        
+        try:
+            # Publish to the pipeline stream (or directly to alerts if skipping engine)
+            # In a real architecture, you'd publish to an 'incoming_tx' queue and the engine picks it up.
+            # But here we will call process_transaction directly to reuse our engine.
+            from engine.pipeline import process_transaction
+            
+            # This simulates the "Engine waking up"
+            process_transaction(tx_data_stream)
+            
+        except Exception as e:
+            print(f"Error streaming transaction {tx_id}: {e}")
+            
+        # Optional: Slow down ingestion slightly so the dashboard is readable (throttle)
+        time.sleep(0.05) 
+
+    print(f"Successfully ingested and streamed {success_count} transactions!")
 
 if __name__ == "__main__":
     start_ingestion()
