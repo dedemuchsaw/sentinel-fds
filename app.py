@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask_cors import CORS
 from arango import ArangoClient
 from werkzeug.security import check_password_hash
 from functools import wraps
@@ -12,6 +13,8 @@ import random
 from engine.pipeline import process_transaction, process_account_event
 
 app = Flask(__name__)
+# Enable CORS for Next.js Frontend
+CORS(app) 
 # Gunakan key statis dulu agar session gak reset tiap kali venv restart
 app.secret_key = 'sentinel_dev_key_2026'
 
