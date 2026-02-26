@@ -6,147 +6,150 @@
 {% block content %}
 <div class="flex justify-between items-center mb-8">
     <div>
-        <h1 class="text-3xl font-bold text-slate-900 mb-2">Detection Engine Configuration</h1>
-        <p class="text-slate-500">Tuning Expert Rules and Hybrid ML Sensitivity</p>
+        <h1 class="text-3xl font-bold text-white mb-2">Detection Engine Configuration</h1>
+        <p class="text-slate-400 font-medium">Tuning Expert Rules and Hybrid ML Sensitivity</p>
     </div>
     <button onclick="alert('Configuration saved to Graph Engine!')"
-        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors focus:ring-4 focus:ring-blue-100 flex items-center gap-2">
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-all shadow-lg hover:shadow-blue-500/20 border border-blue-500/20 flex items-center gap-2">
         <i data-lucide="save" class="h-4 w-4"></i> Save Changes
     </button>
 </div>
 
 <div class="grid grid-cols-2 gap-6 mb-8">
     <!-- ML Panel -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h3 class="flex items-center gap-2 text-lg font-semibold text-slate-800 pb-4 mb-4 border-b border-slate-100">
-            <i data-lucide="brain-circuit" class="h-5 w-5 text-indigo-500"></i> Hybrid Machine Learning
+    <div class="bg-slate-900 p-6 rounded-xl shadow-md border border-slate-800">
+        <h3 class="flex items-center gap-2 text-lg font-semibold text-slate-100 pb-4 mb-4 border-b border-slate-800">
+            <i data-lucide="brain-circuit" class="h-5 w-5 text-indigo-400"></i> Hybrid Machine Learning
         </h3>
 
-        <div class="flex justify-between items-center p-4 mb-3 bg-slate-50 rounded-lg border border-slate-100">
+        <div class="flex justify-between items-center p-4 mb-3 bg-slate-950 rounded-lg border border-slate-800">
             <div>
-                <h4 class="text-sm font-semibold text-slate-900 mb-1">ML Status</h4>
+                <h4 class="text-sm font-bold text-slate-200 mb-1 tracking-tight">ML Status</h4>
                 <p class="text-xs text-slate-500">Enable/Disable Hybrid Behavioral AI</p>
             </div>
-            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">ACTIVE</span>
+            <span
+                class="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-bold rounded-full border border-emerald-500/20">ACTIVE</span>
         </div>
 
-        <div class="flex justify-between items-center p-4 mb-3 bg-slate-50 rounded-lg border border-slate-100">
+        <div class="flex justify-between items-center p-4 mb-3 bg-slate-950 rounded-lg border border-slate-800">
             <div>
-                <h4 class="text-sm font-semibold text-slate-900 mb-1">Z-Score Threshold (Behavioral)</h4>
+                <h4 class="text-sm font-bold text-slate-200 mb-1 tracking-tight">Z-Score Threshold (Behavioral)</h4>
                 <p class="text-xs text-slate-500">Multiplier for statistical anomaly detection</p>
             </div>
             <input type="number" value="{{ config.hybrid_ml.zscore_threshold }}" step="0.5"
-                class="w-24 px-3 py-1.5 text-right border border-slate-200 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                class="w-24 px-3 py-1.5 text-right bg-slate-900 border border-slate-700 rounded-md text-sm text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
 
-        <div class="flex justify-between items-center p-4 bg-slate-50 rounded-lg border border-slate-100">
+        <div class="flex justify-between items-center p-4 bg-slate-950 rounded-lg border border-slate-800">
             <div>
-                <h4 class="text-sm font-semibold text-slate-900 mb-1">Expert Signal Penalty</h4>
+                <h4 class="text-sm font-bold text-slate-200 mb-1 tracking-tight">Expert Signal Penalty</h4>
                 <p class="text-xs text-slate-500">Base score penalty from Reactive/Merchant signals</p>
             </div>
             <input type="number" value="{{ config.hybrid_ml.base_penalty }}"
-                class="w-24 px-3 py-1.5 text-right border border-slate-200 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                class="w-24 px-3 py-1.5 text-right bg-slate-900 border border-slate-700 rounded-md text-sm text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
     </div>
 
     <!-- Merchant Panel -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h3 class="flex items-center gap-2 text-lg font-semibold text-slate-800 pb-4 mb-4 border-b border-slate-100">
-            <i data-lucide="store" class="h-5 w-5 text-amber-500"></i> Merchant Expert Rules
+    <div class="bg-slate-900 p-6 rounded-xl shadow-md border border-slate-800">
+        <h3 class="flex items-center gap-2 text-lg font-semibold text-slate-100 pb-4 mb-4 border-b border-slate-800">
+            <i data-lucide="store" class="h-5 w-5 text-amber-400"></i> Merchant Expert Rules
         </h3>
 
-        <div class="flex justify-between items-center p-4 mb-3 bg-slate-50 rounded-lg border border-slate-100">
+        <div class="flex justify-between items-center p-4 mb-3 bg-slate-950 rounded-lg border border-slate-800">
             <div>
-                <h4 class="text-sm font-semibold text-slate-900 mb-1">Cashback Abuse Ratio (Rule 11)</h4>
+                <h4 class="text-sm font-bold text-slate-200 mb-1 tracking-tight">Cashback Abuse Ratio (Rule 11)</h4>
                 <p class="text-xs text-slate-500">Threshold relative to sales volume</p>
             </div>
             <input type="number" value="{{ config.merchants.cashback_rate }}" step="0.1"
-                class="w-24 px-3 py-1.5 text-right border border-slate-200 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                class="w-24 px-3 py-1.5 text-right bg-slate-900 border border-slate-700 rounded-md text-sm text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
 
-        <div class="flex justify-between items-center p-4 mb-3 bg-slate-50 rounded-lg border border-slate-100">
+        <div class="flex justify-between items-center p-4 mb-3 bg-slate-950 rounded-lg border border-slate-800">
             <div>
-                <h4 class="text-sm font-semibold text-slate-900 mb-1">Min. Cashback Trx (Rule 11)</h4>
+                <h4 class="text-sm font-bold text-slate-200 mb-1 tracking-tight">Min. Cashback Trx (Rule 11)</h4>
                 <p class="text-xs text-slate-500">Minimum required transactions to trigger</p>
             </div>
             <input type="number" value="{{ config.merchants.cb_trx }}"
-                class="w-24 px-3 py-1.5 text-right border border-slate-200 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                class="w-24 px-3 py-1.5 text-right bg-slate-900 border border-slate-700 rounded-md text-sm text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
 
-        <div class="flex justify-between items-center p-4 bg-slate-50 rounded-lg border border-slate-100">
+        <div class="flex justify-between items-center p-4 bg-slate-950 rounded-lg border border-slate-800">
             <div>
-                <h4 class="text-sm font-semibold text-slate-900 mb-1">Merchant Obs. Days (Rule 12)</h4>
+                <h4 class="text-sm font-bold text-slate-200 mb-1 tracking-tight">Merchant Obs. Days (Rule 12)</h4>
                 <p class="text-xs text-slate-500">Observation window for behavior tracking</p>
             </div>
             <input type="number" value="{{ config.merchants.obs_days }}"
-                class="w-24 px-3 py-1.5 text-right border border-slate-200 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                class="w-24 px-3 py-1.5 text-right bg-slate-900 border border-slate-700 rounded-md text-sm text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
     </div>
 
     <!-- Reactive Panel -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h3 class="flex items-center gap-2 text-lg font-semibold text-slate-800 pb-4 mb-4 border-b border-slate-100">
-            <i data-lucide="zap" class="h-5 w-5 text-rose-500"></i> Zero-Latency Reactive Rules
+    <div class="bg-slate-900 p-6 rounded-xl shadow-md border border-slate-800">
+        <h3 class="flex items-center gap-2 text-lg font-semibold text-slate-100 pb-4 mb-4 border-b border-slate-800">
+            <i data-lucide="zap" class="h-5 w-5 text-rose-400"></i> Zero-Latency Reactive Rules
         </h3>
 
-        <div class="flex justify-between items-center p-4 mb-3 bg-slate-50 rounded-lg border border-slate-100">
+        <div class="flex justify-between items-center p-4 mb-3 bg-slate-950 rounded-lg border border-slate-800">
             <div>
-                <h4 class="text-sm font-semibold text-slate-900 mb-1">Off-hour Start (Rule 13)</h4>
+                <h4 class="text-sm font-bold text-slate-200 mb-1 tracking-tight">Off-hour Start (Rule 13)</h4>
                 <p class="text-xs text-slate-500">Beginning of unusual hours</p>
             </div>
             <input type="text" value="{{ config.anomalies.time_start }}"
-                class="w-24 px-3 py-1.5 text-right border border-slate-200 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                class="w-24 px-3 py-1.5 text-right bg-slate-900 border border-slate-700 rounded-md text-sm text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
 
-        <div class="flex justify-between items-center p-4 mb-3 bg-slate-50 rounded-lg border border-slate-100">
+        <div class="flex justify-between items-center p-4 mb-3 bg-slate-950 rounded-lg border border-slate-800">
             <div>
-                <h4 class="text-sm font-semibold text-slate-900 mb-1">Off-hour End (Rule 13)</h4>
+                <h4 class="text-sm font-bold text-slate-200 mb-1 tracking-tight">Off-hour End (Rule 13)</h4>
                 <p class="text-xs text-slate-500">End of unusual hours</p>
             </div>
             <input type="text" value="{{ config.anomalies.time_end }}"
-                class="w-24 px-3 py-1.5 text-right border border-slate-200 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                class="w-24 px-3 py-1.5 text-right bg-slate-900 border border-slate-700 rounded-md text-sm text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
 
-        <div class="flex justify-between items-center p-4 bg-slate-50 rounded-lg border border-slate-100">
+        <div class="flex justify-between items-center p-4 bg-slate-950 rounded-lg border border-slate-800">
             <div>
-                <h4 class="text-sm font-semibold text-slate-900 mb-1">Repeated Small Trx Limit (Rule 14)</h4>
+                <h4 class="text-sm font-bold text-slate-200 mb-1 tracking-tight">Repeated Small Trx Limit (Rule 14)</h4>
                 <p class="text-xs text-slate-500">Max small transactions in 1 hour</p>
             </div>
             <input type="number" value="{{ config.anomalies.small_trx_limit }}"
-                class="w-24 px-3 py-1.5 text-right border border-slate-200 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                class="w-24 px-3 py-1.5 text-right bg-slate-900 border border-slate-700 rounded-md text-sm text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
     </div>
 
     <!-- Identity & Activity Panel -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h3 class="flex items-center gap-2 text-lg font-semibold text-slate-800 pb-4 mb-4 border-b border-slate-100">
-            <i data-lucide="user-check" class="h-5 w-5 text-teal-500"></i> Contextual Profiles
+    <div class="bg-slate-900 p-6 rounded-xl shadow-md border border-slate-800">
+        <h3 class="flex items-center gap-2 text-lg font-semibold text-slate-100 pb-4 mb-4 border-b border-slate-800">
+            <i data-lucide="user-check" class="h-5 w-5 text-teal-400"></i> Contextual Profiles
         </h3>
 
-        <div class="flex justify-between items-center p-4 mb-3 bg-slate-50 rounded-lg border border-slate-100">
+        <div class="flex justify-between items-center p-4 mb-3 bg-slate-950 rounded-lg border border-slate-800">
             <div>
-                <h4 class="text-sm font-semibold text-slate-900 mb-1">Dormant Days Threshold (Rule 15)</h4>
+                <h4 class="text-sm font-bold text-slate-200 mb-1 tracking-tight">Dormant Days Threshold (Rule 15)</h4>
                 <p class="text-xs text-slate-500">Days of inactivity before flagging</p>
             </div>
             <input type="number" value="80"
-                class="w-24 px-3 py-1.5 text-right border border-slate-200 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                class="w-24 px-3 py-1.5 text-right bg-slate-900 border border-slate-700 rounded-md text-sm text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
 
-        <div class="flex justify-between items-center p-4 mb-3 bg-slate-50 rounded-lg border border-slate-100">
+        <div class="flex justify-between items-center p-4 mb-3 bg-slate-950 rounded-lg border border-slate-800">
             <div>
-                <h4 class="text-sm font-semibold text-slate-900 mb-1">Stolen Ident. Minimum Match (Rule 1)</h4>
+                <h4 class="text-sm font-bold text-slate-200 mb-1 tracking-tight">Stolen Ident. Minimum Match (Rule 1)
+                </h4>
                 <p class="text-xs text-slate-500">Attributes needed to match existing user</p>
             </div>
             <input type="number" value="2"
-                class="w-24 px-3 py-1.5 text-right border border-slate-200 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500">
+                class="w-24 px-3 py-1.5 text-right bg-slate-900 border border-slate-700 rounded-md text-sm text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
 
-        <div class="flex justify-between items-center p-4 bg-slate-50 rounded-lg border border-slate-100">
+        <div class="flex justify-between items-center p-4 bg-slate-950 rounded-lg border border-slate-800">
             <div>
-                <h4 class="text-sm font-semibold text-slate-900 mb-1">Redis Watchlist Status</h4>
+                <h4 class="text-sm font-bold text-slate-200 mb-1 tracking-tight">Redis Watchlist Status</h4>
                 <p class="text-xs text-slate-500">IP, KTP, Phone, Phone Blacklists</p>
             </div>
-            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">SYNCED</span>
+            <span
+                class="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-bold rounded-full border border-emerald-500/20">SYNCED</span>
         </div>
     </div>
 </div>

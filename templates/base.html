@@ -16,71 +16,74 @@
     {% block head %}{% endblock %}
 </head>
 
-<body class="bg-slate-50 text-slate-900 flex min-h-screen">
+<body class="bg-slate-950 text-slate-100 flex min-h-screen">
     <!-- Sidebar -->
-    <div class="w-64 h-screen border-r bg-white flex flex-col fixed left-0 top-0">
-        <div class="p-6 border-b flex items-center gap-2">
-            <i data-lucide="shield-check" class="h-6 w-6 text-blue-600"></i>
-            <span class="font-bold text-lg tracking-tight text-slate-800">Sentinel</span>
+    <div class="w-64 h-screen border-r border-slate-800 bg-slate-900 flex flex-col fixed left-0 top-0">
+        <div class="p-6 border-b border-slate-800 flex items-center gap-2">
+            <i data-lucide="shield-check" class="h-6 w-6 text-blue-500"></i>
+            <span class="font-bold text-lg tracking-tight text-white">Sentinel</span>
             <span class="text-[10px] text-slate-500 font-semibold uppercase mt-1">FDS</span>
         </div>
 
         <div class="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
             <a href="/dashboard"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors {% if request.path == '/dashboard' %}bg-blue-50 text-blue-600{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors {% if request.path == '/dashboard' %}bg-blue-600/10 text-blue-400{% else %}text-slate-400 hover:bg-slate-800 hover:text-slate-100{% endif %}">
                 <i data-lucide="layout-dashboard"
-                    class="h-4 w-4 {% if request.path == '/dashboard' %}text-blue-600{% else %}text-slate-400{% endif %}"></i>
+                    class="h-4 w-4 {% if request.path == '/dashboard' %}text-blue-400{% else %}text-slate-500{% endif %}"></i>
                 Dashboard
             </a>
             <a href="/investigation"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors {% if request.path == '/investigation' %}bg-blue-50 text-blue-600{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors {% if request.path == '/investigation' %}bg-blue-600/10 text-blue-400{% else %}text-slate-400 hover:bg-slate-800 hover:text-slate-100{% endif %}">
                 <i data-lucide="shield-alert"
-                    class="h-4 w-4 {% if request.path == '/investigation' %}text-blue-600{% else %}text-slate-400{% endif %}"></i>
+                    class="h-4 w-4 {% if request.path == '/investigation' %}text-blue-400{% else %}text-slate-500{% endif %}"></i>
                 Investigation Lab
             </a>
             {% if 'auditor' in roles or 'super_admin' in roles %}
             <a href="/compliance"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors {% if request.path == '/compliance' %}bg-blue-50 text-blue-600{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors {% if request.path == '/compliance' %}bg-blue-600/10 text-blue-400{% else %}text-slate-400 hover:bg-slate-800 hover:text-slate-100{% endif %}">
                 <i data-lucide="file-text"
-                    class="h-4 w-4 {% if request.path == '/compliance' %}text-blue-600{% else %}text-slate-400{% endif %}"></i>
+                    class="h-4 w-4 {% if request.path == '/compliance' %}text-blue-400{% else %}text-slate-500{% endif %}"></i>
                 Compliance Audit
             </a>
             {% endif %}
             <a href="/engine_config"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors {% if request.path == '/engine_config' %}bg-blue-50 text-blue-600{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors {% if request.path == '/engine_config' %}bg-blue-600/10 text-blue-400{% else %}text-slate-400 hover:bg-slate-800 hover:text-slate-100{% endif %}">
                 <i data-lucide="settings-2"
-                    class="h-4 w-4 {% if request.path == '/engine_config' %}text-blue-600{% else %}text-slate-400{% endif %}"></i>
+                    class="h-4 w-4 {% if request.path == '/engine_config' %}text-blue-400{% else %}text-slate-500{% endif %}"></i>
                 Rule & ML Config
             </a>
         </div>
 
-        <div class="p-4 border-t">
+        <div class="p-4 border-t border-slate-800">
             <a href="/logout"
-                class="flex items-center gap-3 px-4 py-3 w-full text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-rose-600 rounded-lg transition-colors">
-                <i data-lucide="log-out" class="h-4 w-4 text-slate-400"></i>
+                class="flex items-center gap-3 px-4 py-3 w-full text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-rose-400 rounded-lg transition-colors">
+                <i data-lucide="log-out" class="h-4 w-4 text-slate-500"></i>
                 Logout
             </a>
         </div>
     </div>
 
     <!-- Main Content -->
-    <main class="flex-1 ml-64 flex flex-col p-8 bg-slate-50 min-h-screen x-overflow-hidden">
+    <main class="flex-1 ml-64 flex flex-col p-8 bg-slate-950 min-h-screen x-overflow-hidden">
         <!-- Top Header -->
         <header class="flex justify-between items-center mb-8">
             <div class="flex items-center gap-2 text-sm text-slate-500">
                 <span>Home</span>
                 <span>/</span>
-                <span class="font-semibold text-slate-900">{% block breadcrumb %}Dashboard{% endblock %}</span>
+                <span class="font-semibold text-slate-200">{% block breadcrumb %}Dashboard{% endblock %}</span>
             </div>
             <div class="flex gap-4 items-center">
-                <div id="connection-badge" class="px-3 py-1 text-xs rounded-full font-bold bg-rose-100 text-rose-700">
+                <div id="connection-badge"
+                    class="px-3 py-1 text-xs rounded-full font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
                     Connecting...
                 </div>
                 <div
-                    class="flex items-center gap-3 bg-white px-4 py-2 flex-shrink-0 cursor-pointer rounded-full shadow-sm border hover:bg-slate-50 transition">
-                    <i data-lucide="user-circle" class="h-5 w-5 text-slate-600"></i>
-                    <span class="text-sm font-medium text-slate-700">{{ name }}</span>
-                    <span class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">{{ roles[0] | upper if
+                    class="flex items-center gap-3 bg-slate-900 px-4 py-2 flex-shrink-0 cursor-pointer rounded-full shadow-md border border-slate-800 hover:bg-slate-800 transition">
+                    <i data-lucide="user-circle" class="h-5 w-5 text-slate-400"></i>
+                    <span class="text-sm font-medium text-slate-200">{{ name }}</span>
+                    <span
+                        class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full border border-slate-700">{{
+                        roles[0] | upper if
                         roles else 'NO ROLE' }}</span>
                 </div>
             </div>
