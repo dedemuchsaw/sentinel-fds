@@ -9,7 +9,7 @@ import json
 import uuid
 import datetime
 import random
-from engine.pipeline import process_transaction
+from engine.pipeline import process_transaction, process_account_event
 
 app = Flask(__name__)
 # Gunakan key statis dulu agar session gak reset tiap kali venv restart
@@ -117,20 +117,46 @@ def auth():
 @app.route('/api/simulate', methods=['POST'])
 @login_required
 def api_simulate():
-    """Manual trigger for testing the Real-time Dashboard interactivity."""
+    """Manual trigger for testing Transaction Anomalies & Chargebacks."""
     accounts = ['ACC-101', 'ACC-202', 'ACC-303', 'ACC-999']
     now = datetime.datetime.now()
+    
+    # 20% chance to simulate a Chargeback event
+    is_chargeback = random.random() < 0.2
+    
     tx_data = {
         "id": f"TX-{str(uuid.uuid4())[:8].upper()}",
         "account_id": random.choice(accounts),
-        "amount": random.randint(10000, 2000000),  # Random amount to trigger AI sometimes
-        "time": now.strftime("%H:%M:%S")
+        "merchant_id": f"MERCH-{random.randint(100,500)}",
+        "amount": random.randint(1000, 60000000),  # Random amount
+        "time": now.strftime("%H:%M:%S"),
+        "type": "CHARGEBACK" if is_chargeback else "SALE",
+        "ip_address": f"192.168.1.{random.randint(1,255)}",
+        "description": random.choice(["Normal Purchase", "Gift", "OTP verification", "Payment", "PIN code test"])
     }
     
     # Process it directly in the pipeline
     result = process_transaction(tx_data)
     
     return {"status": "success", "tx_id": tx_data['id'], "result": result}
+
+@app.route('/api/simulate_account', methods=['POST'])
+@login_required
+def api_simulate_account():
+    """Manual trigger for testing Identity Events (Registration/Update)."""
+    # Dummy data that attempts to reuse identities or is in watchlist
+    payloads = [
+        # Simulating Stolen Identity (matching KTP, Address, Phone of someone else)
+        {"account_id": f"NEW-{random.randint(1000,9999)}", "ktp": "317000000", "address": "Jl. Mawar Merah No 5 Jakarta", "phone": "08123456789"},
+        # Simulating Fraud Identity (In blocklist)
+        {"account_id": f"NEW-{random.randint(1000,9999)}", "ktp": "DTTOT-ID-001", "name": "Budi Koruptor", "phone": "0899BlockList"},
+        # Normal
+        {"account_id": f"NEW-{random.randint(1000,9999)}", "ktp": str(random.randint(10**9, 10**10)), "name": "Regular User"}
+    ]
+    
+    account_data = random.choice(payloads)
+    result = process_account_event(account_data)
+    return {"status": "success", "event": "ACCOUNT_REGISTRATION", "result": result}
 
 @app.route('/dashboard')
 @login_required
@@ -178,6 +204,17 @@ def compliance():
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
+@app.route('/engine_config')
+@login_required
+def engine_config():
+    # Provide dummy parameters to the template for viewing
+    config = {
+        "hybrid_ml": {"enabled": True, "zscore_threshold": 5, "base_penalty": 20},
+        "merchants": {"obs_days": 7, "cashback_rate": 0.3, "cb_trx": 3},
+        "anomalies": {"time_start": "22:00", "time_end": "05:00", "small_trx_limit": 5}
+    }
+    return render_template('engine_config.html', name=session.get('full_name', 'Security Officer'), roles=session.get('roles', []), config=config)
 
 if __name__ == '__main__':
     # Memulai background thread listener Redis

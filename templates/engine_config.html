@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sentinel | Rule & ML Config</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #38bdf8;
+            --success: #34d399;
+            --danger: #f87171;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--card);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-link {
+            padding: 12px;
+            border-radius: 8px;
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-bottom: 8px;
+            transition: 0.3s;
+        }
+
+        .nav-link.active {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent);
+        }
+
+        .content {
+            flex: 1;
+            padding: 2.5rem;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .role-badge {
+            font-size: 0.7rem;
+            background: var(--accent);
+            color: var(--bg);
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-weight: 600;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section-card h3 {
+            margin-top: 0;
+            color: var(--accent);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .config-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .config-info p {
+            margin: 0;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        input[type="number"],
+        input[type="text"] {
+            background: var(--bg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text);
+            padding: 6px 10px;
+            border-radius: 4px;
+            width: 80px;
+            text-align: right;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-save {
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-save:hover {
+            opacity: 0.9;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: rgba(52, 211, 153, 0.2);
+            color: var(--success);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2 style="color: var(--accent);">Sentinel<span>.FDS</span></h2>
+        <a href="/dashboard" class="nav-link">Dashboard Overview</a>
+        <a href="/investigation" class="nav-link">Investigation Lab</a>
+        {% if 'auditor' in roles or 'super_admin' in roles %}
+        <a href="/compliance" class="nav-link">Compliance Audit</a>
+        {% endif %}
+        <a href="/engine_config" class="nav-link active">Rule & ML Config</a>
+        <div style="flex:1"></div>
+        <a href="/logout" class="nav-link" style="color: var(--danger);">Logout Session</a>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <div>
+                <h1 style="margin:0;">Detection Engine Configuration</h1>
+                <p style="color: var(--text-dim);">Tuning Expert Rules and Hybrid ML Sensitivity</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="btn-save" onclick="alert('Configuration saved to Graph Engine!')">Save Changes</button>
+                <div class="role-badge">{{ roles[0] | upper if roles else 'NO ROLE' }}</div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- ML Panel -->
+            <div class="section-card">
+                <h3>🧠 Hybrid Machine Learning</h3>
+
+                <div class="config-item">
+                    <div class="config-info">
+                        <h4>ML Status</h4>
+                        <p>Enable/Disable Hybrid Behavioral AI</p>
+                    </div>
+                    <span class="status-badge status-active">ACTIVE</span>
+                </div>
+
+                <div class="config-item">
+                    <div class="config-info">
+                        <h4>Z-Score Threshold (Behavioral)</h4>
+                        <p>Multiplier for statistical anomaly detection</p>
+                    </div>
+                    <input type="number" value="{{ config.hybrid_ml.zscore_threshold }}" step="0.5">
+                </div>
+
+                <div class="config-item">
+                    <div class="config-info">
+                        <h4>Expert Signal Penalty</h4>
+                        <p>Base score penalty from Reactive/Merchant signals</p>
+                    </div>
+                    <input type="number" value="{{ config.hybrid_ml.base_penalty }}">
+                </div>
+            </div>
+
+            <!-- Merchant Panel -->
+            <div class="section-card">
+                <h3>🏬 Merchant Expert Rules</h3>
+
+                <div class="config-item">
+                    <div class="config-info">
+                        <h4>Cashback Abuse Ratio (Rule 11)</h4>
+                        <p>Threshold relative to sales volume</p>
+                    </div>
+                    <input type="number" value="{{ config.merchants.cashback_rate }}" step="0.1">
+                </div>
+
+                <div class="config-item">
+                    <div class="config-info">
+                        <h4>Min. Cashback Trx (Rule 11)</h4>
+                        <p>Minimum required transactions to trigger</p>
+                    </div>
+                    <input type="number" value="{{ config.merchants.cb_trx }}">
+                </div>
+
+                <div class="config-item">
+                    <div class="config-info">
+                        <h4>Merchant Obs. Days (Rule 12)</h4>
+                        <p>Observation window for behavior tracking</p>
+                    </div>
+                    <input type="number" value="{{ config.merchants.obs_days }}">
+                </div>
+            </div>
+
+            <!-- Reactive Panel -->
+            <div class="section-card">
+                <h3>⚡ Zero-Latency Reactive Rules</h3>
+
+                <div class="config-item">
+                    <div class="config-info">
+                        <h4>Off-hour Start (Rule 13)</h4>
+                        <p>Beginning of unusual hours</p>
+                    </div>
+                    <input type="text" value="{{ config.anomalies.time_start }}">
+                </div>
+
+                <div class="config-item">
+                    <div class="config-info">
+                        <h4>Off-hour End (Rule 13)</h4>
+                        <p>End of unusual hours</p>
+                    </div>
+                    <input type="text" value="{{ config.anomalies.time_end }}">
+                </div>
+
+                <div class="config-item">
+                    <div class="config-info">
+                        <h4>Repeated Small Trx Limit (Rule 14)</h4>
+                        <p>Max small transactions in 1 hour</p>
+                    </div>
+                    <input type="number" value="{{ config.anomalies.small_trx_limit }}">
+                </div>
+            </div>
+
+            <!-- Identity & Activity Panel -->
+            <div class="section-card">
+                <h3>👤 Contextual Profiles</h3>
+
+                <div class="config-item">
+                    <div class="config-info">
+                        <h4>Dormant Days Threshold (Rule 15)</h4>
+                        <p>Days of inactivity before flagging</p>
+                    </div>
+                    <input type="number" value="80">
+                </div>
+
+                <div class="config-item">
+                    <div class="config-info">
+                        <h4>Stolen Ident. Minimum Match (Rule 1)</h4>
+                        <p>Attributes needed to match existing user</p>
+                    </div>
+                    <input type="number" value="2">
+                </div>
+
+                <div class="config-item">
+                    <div class="config-info">
+                        <h4>Redis Watchlist Status</h4>
+                        <p>IP, KTP, Phone, Phone Blacklists</p>
+                    </div>
+                    <span class="status-badge status-active">SYNCED</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>
