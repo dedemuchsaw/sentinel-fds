@@ -3,8 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sentinel | Command Center{% endblock %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
@@ -12,123 +14,160 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
     </style>
     {% block head %}{% endblock %}
 </head>
 
-<body class="bg-[#050810] text-slate-100 flex min-h-screen selection:bg-blue-500/30">
-    <!-- Animated background glow -->
-    <div class="fixed inset-0 pointer-events-none overflow-hidden">
-        <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full"></div>
-        <div class="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full"></div>
-    </div>
+<body
+    class="bg-[#030610] text-[#E0E2E8] min-h-screen selection:bg-blue-500/30 flex flex-col font-sans antialiased overflow-x-hidden relative z-0">
 
-    <!-- Sidebar -->
-    <div class="w-72 h-screen border-r border-white/5 bg-slate-900/40 backdrop-blur-xl flex flex-col fixed left-0 top-0 z-50">
-        <div class="p-8 border-b border-white/5 flex items-center gap-3">
-            <div class="relative">
-                <div class="absolute inset-0 bg-blue-500 blur-lg opacity-20 animate-pulse"></div>
-                <i data-lucide="shield-check" class="h-7 w-7 text-blue-400 relative z-10"></i>
-            </div>
-            <div class="flex flex-col">
-                <span class="font-bold text-xl tracking-tight text-white leading-none">Sentinel</span>
-                <span class="text-[9px] text-blue-400 font-extrabold uppercase tracking-[0.2em] mt-1.5 opacity-80">Fraud Detection System</span>
-            </div>
+    <!-- Ambient Symmetrical Background -->
+    <div class="fixed inset-0 pointer-events-none flex justify-center z-[-1]">
+        <div
+            class="absolute top-0 w-[800px] h-[500px] bg-blue-600/10 blur-[150px] rounded-full mix-blend-screen transform -translate-y-1/2">
         </div>
-
-        <div class="flex-1 py-10 px-6 space-y-2 overflow-y-auto">
-            <a href="/dashboard"
-                class="group flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 {% if request.path == '/dashboard' %}bg-blue-600/10 text-blue-400 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-blue-500/20{% else %}text-slate-400 hover:bg-white/5 hover:text-slate-100{% endif %}">
-                <i data-lucide="layout-dashboard"
-                    class="h-[18px] w-[18px] transition-transform group-hover:scale-110 {% if request.path == '/dashboard' %}text-blue-400 font-bold{% else %}text-slate-500{% endif %}"></i>
-                Dashboard
-            </a>
-            <a href="/investigation"
-                class="group flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 {% if request.path == '/investigation' %}bg-blue-600/10 text-blue-400 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-blue-500/20{% else %}text-slate-400 hover:bg-white/5 hover:text-slate-100{% endif %}">
-                <i data-lucide="network"
-                    class="h-[18px] w-[18px] transition-transform group-hover:scale-110 {% if request.path == '/investigation' %}text-blue-400 font-bold{% else %}text-slate-500{% endif %}"></i>
-                Investigation Lab
-            </a>
-            {% if 'auditor' in roles or 'super_admin' in roles %}
-            <a href="/compliance"
-                class="group flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 {% if request.path == '/compliance' %}bg-blue-600/10 text-blue-400 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-blue-500/20{% else %}text-slate-400 hover:bg-white/5 hover:text-slate-100{% endif %}">
-                <i data-lucide="file-check-2"
-                    class="h-[18px] w-[18px] transition-transform group-hover:scale-110 {% if request.path == '/compliance' %}text-blue-400 font-bold{% else %}text-slate-500{% endif %}"></i>
-                Compliance Audit
-            </a>
-            {% endif %}
-            <a href="/engine_config"
-                class="group flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 {% if request.path == '/engine_config' %}bg-blue-600/10 text-blue-400 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-blue-500/20{% else %}text-slate-400 hover:bg-white/5 hover:text-slate-100{% endif %}">
-                <i data-lucide="cpu"
-                    class="h-[18px] w-[18px] transition-transform group-hover:scale-110 {% if request.path == '/engine_config' %}text-blue-400 font-bold{% else %}text-slate-500{% endif %}"></i>
-                Rule & AI Config
-            </a>
-        </div>
-
-        <div class="p-6 border-t border-white/5">
-            <a href="/logout"
-                class="flex items-center gap-3.5 px-4 py-4 w-full text-sm font-bold text-slate-500 hover:bg-rose-500/10 hover:text-rose-400 rounded-xl transition-all duration-300">
-                <i data-lucide="log-out" class="h-4 w-4"></i>
-                Safety Logout
-            </a>
+        <div
+            class="absolute bottom-0 w-[800px] h-[500px] bg-indigo-600/10 blur-[150px] rounded-full mix-blend-screen transform translate-y-1/2">
         </div>
     </div>
 
-    <!-- Main Content -->
-    <main class="flex-1 ml-72 flex flex-col p-10 relative z-10">
-        <!-- Top Header -->
-        <header class="flex justify-between items-center mb-10">
-            <div class="flex items-center gap-3 text-[13px] text-slate-500 font-medium">
-                <span class="hover:text-blue-400 transition-colors cursor-pointer">Security Core</span>
-                <i data-lucide="chevron-right" class="h-3 w-3 opacity-50"></i>
-                <span class="text-slate-200 font-bold tracking-tight">{% block breadcrumb %}Dashboard{% endblock %}</span>
-            </div>
-            <div class="flex gap-6 items-center">
-                <div id="connection-badge"
-                    class="flex items-center gap-2 px-3.5 py-1.5 text-[10px] rounded-full font-black uppercase tracking-widest bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                    <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-                    </span>
-                    Connecting
-                </div>
-                <div
-                    class="flex items-center gap-4 bg-white/5 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer group">
-                    <div class="text-right">
-                        <p class="text-xs font-bold text-white leading-none mb-1">{{ name }}</p>
-                        <p class="text-[9px] text-blue-400 font-black tracking-tighter uppercase opacity-70">{{ roles[0] if roles else 'NO ROLE' }}</p>
-                    </div>
-                    <div class="h-9 w-9 bg-blue-500/20 rounded-xl flex items-center justify-center border border-blue-500/30 group-hover:scale-105 transition-transform">
+    <!-- Responsive Symmetrical Navigation -->
+    <nav class="sticky top-0 z-50 w-full border-b border-white/5 bg-slate-900/60 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+
+                <!-- Brand (Left) -->
+                <div class="flex items-center gap-3 w-1/4">
+                    <div
+                        class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-transparent border border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
                         <i data-lucide="shield-check" class="h-5 w-5 text-blue-400"></i>
                     </div>
+                    <div class="flex flex-col">
+                        <span class="font-black text-lg tracking-tight text-white leading-none">Sentinel</span>
+                        <span
+                            class="text-[9px] text-blue-400 font-extrabold uppercase tracking-[0.2em] mt-1 pr-1 opacity-80">FDS
+                            Engine</span>
+                    </div>
                 </div>
-            </div>
-        </header>
 
+                <!-- Navigation (Center) -->
+                <div
+                    class="hidden md:flex items-center justify-center space-x-1.5 bg-white/5 p-1.5 rounded-2xl border border-white/5 w-1/2 flex-1 max-w-2xl mx-auto">
+                    <a href="/dashboard"
+                        class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 {% if request.path == '/dashboard' %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %} flex items-center gap-2">
+                        <i data-lucide="layout-dashboard" class="h-4 w-4"></i> Dashboard
+                    </a>
+                    <a href="/investigation"
+                        class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 {% if request.path == '/investigation' %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %} flex items-center gap-2">
+                        <i data-lucide="network" class="h-4 w-4"></i> Investigation
+                    </a>
+                    {% if 'auditor' in roles or 'super_admin' in roles %}
+                    <a href="/compliance"
+                        class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 {% if request.path == '/compliance' %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %} flex items-center gap-2">
+                        <i data-lucide="file-check-2" class="h-4 w-4"></i> Compliance
+                    </a>
+                    {% endif %}
+                    <a href="/engine_config"
+                        class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 {% if request.path == '/engine_config' %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %} flex items-center gap-2">
+                        <i data-lucide="cpu" class="h-4 w-4"></i> Config
+                    </a>
+                </div>
+
+                <!-- Profile & Status (Right) -->
+                <div class="flex items-center justify-end gap-5 w-1/4">
+                    <div id="connection-badge"
+                        class="hidden sm:flex items-center gap-2 px-3 py-1.5 text-[9px] rounded-full font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 transition-all duration-500">
+                        <span class="relative flex h-2 w-2">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        Connecting
+                    </div>
+
+                    <div class="flex items-center gap-3 cursor-pointer group relative"
+                        onclick="document.getElementById('dropdown').classList.toggle('hidden')">
+                        <div class="text-right hidden lg:block">
+                            <p class="text-xs font-bold text-white leading-none mb-1">{{ name }}</p>
+                            <p class="text-[9px] text-blue-400 font-black tracking-tighter uppercase opacity-70">{{
+                                roles[0] if roles else 'OFFICER' }}</p>
+                        </div>
+                        <div
+                            class="h-9 w-9 bg-slate-800 rounded-full flex items-center justify-center border border-white/10 group-hover:border-white/30 transition-all shadow-lg">
+                            <i data-lucide="user"
+                                class="h-4 w-4 text-slate-400 group-hover:text-white transition-colors"></i>
+                        </div>
+
+                        <!-- Dropdown -->
+                        <div id="dropdown"
+                            class="absolute right-0 top-14 w-48 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl hidden overflow-hidden z-50 transform origin-top-right transition-all">
+                            <a href="/logout"
+                                class="flex items-center gap-3 px-5 py-4 text-xs font-bold text-rose-400 hover:bg-rose-500/10 transition-colors">
+                                <i data-lucide="log-out" class="h-4 w-4"></i> Secure Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 relative z-10 flex flex-col">
         {% block content %}{% endblock %}
     </main>
+
+    <!-- Footer (Symmetrical) -->
+    <footer class="w-full border-t border-white/5 py-8 mt-auto z-10 text-center">
+        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Sentinel Fraud Detection System &copy;
+            2026</p>
+    </footer>
 
     <!-- Base Scripts -->
     <script>
         lucide.createIcons();
 
+        // Click outside dropdown to close
+        document.addEventListener('click', function (event) {
+            const dropdown = document.getElementById('dropdown');
+            const userMenu = dropdown.parentElement;
+            if (!userMenu.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
         // Socket.IO Connection Setup
         const socket = io({ transports: ['websocket', 'polling'] });
-
         socket.on('connect', function () {
-            console.log('Connected to Sentinel FDS via WebSockets!');
             const badge = document.getElementById('connection-badge');
             if (badge) {
-                badge.className = 'flex items-center gap-2 px-3.5 py-1.5 text-[10px] rounded-full font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-                badge.innerHTML = `<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span> Engine Active`;
+                badge.className = 'hidden sm:flex items-center gap-2 px-3 py-1.5 text-[9px] rounded-full font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+                badge.innerHTML = `<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span> Connected`;
             }
         });
 
         socket.on('disconnect', function () {
-            console.log('Disconnected!');
             const badge = document.getElementById('connection-badge');
             if (badge) {
-                badge.className = 'flex items-center gap-2 px-3.5 py-1.5 text-[10px] rounded-full font-black uppercase tracking-widest bg-rose-500/10 text-rose-400 border border-rose-500/20';
+                badge.className = 'hidden sm:flex items-center gap-2 px-3 py-1.5 text-[9px] rounded-full font-black uppercase tracking-widest bg-rose-500/10 text-rose-400 border border-rose-500/20';
                 badge.innerHTML = `<span class="relative flex h-2 w-2"><span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span></span> Offline`;
             }
         });

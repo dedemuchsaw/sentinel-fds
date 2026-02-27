@@ -1,36 +1,55 @@
 {% extends "base.html" %}
 
 {% block title %}Sentinel | Compliance Audit{% endblock %}
-{% block breadcrumb %}Compliance Audit{% endblock %}
 
 {% block content %}
-<div class="mb-10">
-    <h1 class="text-4xl font-black text-white mb-2 tracking-tighter">Regulatory Compliance</h1>
-    <p class="text-slate-400 font-semibold flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        ISO 20022 Audit Integrity & Fraud Documentation
+<!-- Symmetrical Header -->
+<div class="flex flex-col items-center justify-center text-center mb-16 mt-4">
+    <div
+        class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-6 backdrop-blur-sm">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        ISO 20022 Audit Integrity
+    </div>
+    <h1 class="text-5xl md:text-6xl font-black text-white tracking-tighter mb-4 drop-shadow-2xl">Regulatory Compliance
+    </h1>
+    <p class="text-slate-400 max-w-xl mx-auto text-sm md:text-base font-medium leading-relaxed">
+        ISO 20022 Audit Integrity & Fraud Documentation with certified logs for regulatory exports.
     </p>
 </div>
 
-<div class="bg-slate-900/40 backdrop-blur-2xl p-12 rounded-[3.5rem] shadow-3xl border border-white/5 text-center relative overflow-hidden group">
-    <div class="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full group-hover:bg-emerald-500/20 transition-colors"></div>
-    <div class="bg-emerald-500/10 w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-emerald-500/20 relative">
-        <div class="absolute inset-0 bg-emerald-400 blur-xl opacity-20"></div>
-        <i data-lucide="file-check-2" class="h-10 w-10 text-emerald-400 relative z-10"></i>
+<div
+    class="max-w-4xl mx-auto w-full bg-slate-900/40 backdrop-blur-2xl p-12 md:p-16 rounded-3xl shadow-2xl border border-white/5 text-center relative overflow-hidden group">
+    <!-- Ambient glow inside card -->
+    <div
+        class="absolute -top-32 -right-32 w-64 h-64 bg-emerald-500/10 blur-[60px] rounded-full group-hover:bg-emerald-500/20 transition-colors">
     </div>
-    <h2 class="text-2xl font-black text-white mb-4 tracking-tight">Audit Log Manifest</h2>
-    <p class="text-slate-400 max-w-lg mx-auto font-medium leading-relaxed">
-        The compliance documentation engine is preparing certified fraud reports. 
+    <div
+        class="absolute -bottom-32 -left-32 w-64 h-64 bg-teal-500/10 blur-[60px] rounded-full group-hover:bg-teal-500/20 transition-colors">
+    </div>
+
+    <div
+        class="bg-gradient-to-br from-emerald-500/20 to-transparent w-28 h-28 rounded-3xl flex items-center justify-center mx-auto mb-10 border border-emerald-500/30 relative shadow-[0_0_30px_rgba(16,185,129,0.15)] group-hover:scale-105 transition-transform duration-500">
+        <div class="absolute inset-0 bg-emerald-400 blur-2xl opacity-10"></div>
+        <i data-lucide="file-check-2" class="h-12 w-12 text-emerald-400 relative z-10"></i>
+    </div>
+
+    <h2 class="text-3xl font-black text-white mb-6 tracking-tight relative z-10">Audit Log Manifest</h2>
+    <p class="text-slate-400 max-w-lg mx-auto font-medium leading-relaxed mb-12 relative z-10">
+        The compliance documentation engine is preparing certified fraud reports.
         Sentinel is validating historical ISO 20022 message blocks for cryptographic consistency.
     </p>
-    <div class="mt-10 flex flex-wrap justify-center gap-4">
-        <div class="px-6 py-2.5 bg-white/5 rounded-2xl border border-white/10 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+
+    <div class="flex flex-wrap justify-center gap-4 relative z-10">
+        <div
+            class="px-6 py-3 bg-white/5 hover:bg-white/10 transition-colors cursor-default rounded-xl border border-white/5 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] shadow-lg">
             Iso Manifest
         </div>
-        <div class="px-6 py-2.5 bg-white/5 rounded-2xl border border-white/10 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+        <div
+            class="px-6 py-3 bg-white/5 hover:bg-white/10 transition-colors cursor-default rounded-xl border border-white/5 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] shadow-lg">
             Regulatory Export
         </div>
-        <div class="px-6 py-2.5 bg-white/5 rounded-2xl border border-white/10 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+        <div
+            class="px-6 py-3 bg-white/5 hover:bg-white/10 transition-colors cursor-default rounded-xl border border-white/5 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] shadow-lg">
             Audit Trails
         </div>
     </div>

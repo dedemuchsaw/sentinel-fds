@@ -1,163 +1,212 @@
 {% extends "base.html" %}
 
 {% block title %}Sentinel | Rule & ML Config{% endblock %}
-{% block breadcrumb %}Rule & ML Config{% endblock %}
 
 {% block content %}
-<div class="flex justify-between items-center mb-10">
-    <div>
-        <h1 class="text-4xl font-black text-white mb-2 tracking-tighter">Engine Governance</h1>
-        <p class="text-slate-400 font-semibold flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-            Advanced Rulebases & Autonomous AI Modeling
-        </p>
+<!-- Symmetrical Header -->
+<div class="flex flex-col items-center justify-center text-center mb-16 mt-4 relative z-20">
+    <div
+        class="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-6 backdrop-blur-sm">
+        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+        Advanced Rulebases Active
     </div>
+    <h1 class="text-5xl md:text-6xl font-black text-white tracking-tighter mb-4 drop-shadow-2xl">Engine Governance</h1>
+    <p class="text-slate-400 max-w-xl mx-auto text-sm md:text-base font-medium leading-relaxed mb-8">
+        Manage advanced rulebases, autonomous AI modeling, and reactive zero-latency parameters.
+    </p>
     <button onclick="alert('Encryption Key Verified. Changes Synced.')"
-        class="group bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl hover:shadow-indigo-500/20 border border-indigo-400/20 flex items-center gap-3">
+        class="group bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-8 py-3.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] border border-white/10 flex items-center gap-3 active:scale-95">
         <i data-lucide="shield-check" class="h-4 w-4"></i> Synchronize Logic
     </button>
 </div>
 
-<div class="grid grid-cols-2 gap-8 mb-10">
+<!-- Config Grid (Symmetrical 2x2) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 relative z-10 max-w-5xl mx-auto">
     <!-- AI Modeling Panel -->
-    <div class="bg-slate-900/40 backdrop-blur-xl p-8 rounded-[3rem] shadow-2xl border border-white/5 relative overflow-hidden group">
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 blur-[60px] rounded-full group-hover:bg-indigo-500/20 transition-colors"></div>
-        <h3 class="flex items-center gap-3 text-xl font-black text-white pb-6 mb-6 border-b border-white/5 tracking-tighter">
-            <i data-lucide="brain-circuit" class="h-6 w-6 text-indigo-400"></i> Behavioral AI Modeling
+    <div
+        class="bg-slate-900/40 backdrop-blur-2xl p-8 md:p-10 rounded-3xl shadow-2xl border border-white/5 relative overflow-hidden group">
+        <div
+            class="absolute -top-16 -right-16 w-48 h-48 bg-indigo-500/10 blur-[50px] rounded-full group-hover:bg-indigo-500/20 transition-colors">
+        </div>
+        <h3
+            class="flex items-center gap-4 text-2xl font-black text-white pb-6 mb-8 border-b border-white/5 tracking-tight relative z-10">
+            <div class="bg-indigo-500/10 p-2.5 rounded-xl border border-indigo-500/20">
+                <i data-lucide="brain-circuit" class="h-6 w-6 text-indigo-400"></i>
+            </div>
+            AI Modeling
         </h3>
 
-        <div class="space-y-4">
-            <div class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 group/row hover:bg-white/5 transition-colors">
+        <div class="space-y-4 relative z-10">
+            <div
+                class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
                 <div>
-                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Model State</h4>
-                    <p class="text-xs text-slate-500 font-bold">Autonomous Perception Engine</p>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Model State</h4>
+                    <p class="text-xs text-slate-300 font-medium">Autonomous Perception Engine</p>
                 </div>
-                <div class="flex items-center gap-3">
-                    <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-black rounded-full border border-emerald-500/20 uppercase tracking-widest">Active</span>
-                </div>
+                <span
+                    class="px-4 py-1.5 bg-emerald-500/10 text-emerald-400 text-[9px] font-black rounded-lg border border-emerald-500/20 uppercase tracking-widest shadow-sm">Active</span>
             </div>
 
-            <div class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 group/row hover:bg-white/5 transition-colors">
+            <div
+                class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
                 <div>
-                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Sensitivity Index</h4>
-                    <p class="text-xs text-slate-500 font-bold">Standard Deviation Multiplier</p>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Sensitivity Index
+                    </h4>
+                    <p class="text-xs text-slate-300 font-medium">Standard Deviation Multiplier</p>
                 </div>
                 <input type="number" value="{{ config.hybrid_ml.zscore_threshold }}" step="0.5"
-                    class="w-24 px-4 py-2 text-right bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                    class="w-20 px-3 py-2 text-center bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]">
             </div>
 
-            <div class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 group/row hover:bg-white/5 transition-colors">
+            <div
+                class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
                 <div>
-                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Penalty Weight</h4>
-                    <p class="text-xs text-slate-500 font-bold">Signal Attenuation Factor</p>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Penalty Weight
+                    </h4>
+                    <p class="text-xs text-slate-300 font-medium">Signal Attenuation Factor</p>
                 </div>
                 <input type="number" value="{{ config.hybrid_ml.base_penalty }}"
-                    class="w-24 px-4 py-2 text-right bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                    class="w-20 px-3 py-2 text-center bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]">
             </div>
         </div>
     </div>
 
     <!-- Merchant Expert Rules -->
-    <div class="bg-slate-900/40 backdrop-blur-xl p-8 rounded-[3rem] shadow-2xl border border-white/5 relative overflow-hidden group">
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-500/10 blur-[60px] rounded-full group-hover:bg-amber-500/20 transition-colors"></div>
-        <h3 class="flex items-center gap-3 text-xl font-black text-white pb-6 mb-6 border-b border-white/5 tracking-tighter">
-            <i data-lucide="store" class="h-6 w-6 text-amber-400"></i> Merchant Core Logic
+    <div
+        class="bg-slate-900/40 backdrop-blur-2xl p-8 md:p-10 rounded-3xl shadow-2xl border border-white/5 relative overflow-hidden group">
+        <div
+            class="absolute -top-16 -right-16 w-48 h-48 bg-amber-500/10 blur-[50px] rounded-full group-hover:bg-amber-500/20 transition-colors">
+        </div>
+        <h3
+            class="flex items-center gap-4 text-2xl font-black text-white pb-6 mb-8 border-b border-white/5 tracking-tight relative z-10">
+            <div class="bg-amber-500/10 p-2.5 rounded-xl border border-amber-500/20">
+                <i data-lucide="store" class="h-6 w-6 text-amber-400"></i>
+            </div>
+            Merchant Logic
         </h3>
 
-        <div class="space-y-4">
-            <div class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
+        <div class="space-y-4 relative z-10">
+            <div
+                class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
                 <div>
-                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Abuse Tolerance</h4>
-                    <p class="text-xs text-slate-500 font-bold">Cashback/Sales Ratio Limit</p>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Abuse Tolerance
+                    </h4>
+                    <p class="text-xs text-slate-300 font-medium">Cashback Ratio Limit</p>
                 </div>
                 <input type="number" value="{{ config.merchants.cashback_rate }}" step="0.1"
-                    class="w-24 px-4 py-2 text-right bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all">
+                    class="w-20 px-3 py-2 text-center bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]">
             </div>
 
-            <div class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
+            <div
+                class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
                 <div>
-                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Trx Momentum</h4>
-                    <p class="text-xs text-slate-500 font-bold">Min Events for Rule Trigger</p>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Trx Momentum</h4>
+                    <p class="text-xs text-slate-300 font-medium">Min Events for Trigger</p>
                 </div>
                 <input type="number" value="{{ config.merchants.cb_trx }}"
-                    class="w-24 px-4 py-2 text-right bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all">
+                    class="w-20 px-3 py-2 text-center bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]">
             </div>
 
-            <div class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
+            <div
+                class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
                 <div>
-                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Sync Horizon</h4>
-                    <p class="text-xs text-slate-500 font-bold">Observation Window (Days)</p>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Sync Horizon</h4>
+                    <p class="text-xs text-slate-300 font-medium">Observation Days</p>
                 </div>
                 <input type="number" value="{{ config.merchants.obs_days }}"
-                    class="w-24 px-4 py-2 text-right bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all">
+                    class="w-20 px-3 py-2 text-center bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]">
             </div>
         </div>
     </div>
 
     <!-- Reactive Zero-Latency -->
-    <div class="bg-slate-900/40 backdrop-blur-xl p-8 rounded-[3rem] shadow-2xl border border-white/5 relative overflow-hidden group">
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-rose-500/10 blur-[60px] rounded-full group-hover:bg-rose-500/20 transition-colors"></div>
-        <h3 class="flex items-center gap-3 text-xl font-black text-white pb-6 mb-6 border-b border-white/5 tracking-tighter">
-            <i data-lucide="zap" class="h-6 w-6 text-rose-400"></i> Zero-Latency Reactive
+    <div
+        class="bg-slate-900/40 backdrop-blur-2xl p-8 md:p-10 rounded-3xl shadow-2xl border border-white/5 relative overflow-hidden group">
+        <div
+            class="absolute -top-16 -right-16 w-48 h-48 bg-rose-500/10 blur-[50px] rounded-full group-hover:bg-rose-500/20 transition-colors">
+        </div>
+        <h3
+            class="flex items-center gap-4 text-2xl font-black text-white pb-6 mb-8 border-b border-white/5 tracking-tight relative z-10">
+            <div class="bg-rose-500/10 p-2.5 rounded-xl border border-rose-500/20">
+                <i data-lucide="zap" class="h-6 w-6 text-rose-400"></i>
+            </div>
+            Zero-Latency
         </h3>
 
-        <div class="space-y-4">
+        <div class="space-y-4 relative z-10">
             <div class="grid grid-cols-2 gap-4">
-                <div class="p-5 bg-slate-950/50 rounded-2xl border border-white/5">
-                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Quiet Hours Start</h4>
+                <div
+                    class="p-5 bg-slate-950/50 rounded-2xl border border-white/5 text-center hover:bg-white/5 transition-colors">
+                    <h4 class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Quiet Start</h4>
                     <input type="text" value="{{ config.anomalies.time_start }}"
-                        class="w-full px-4 py-2 bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                        class="w-full px-2 py-2 text-center bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-rose-500 focus:outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]">
                 </div>
-                <div class="p-5 bg-slate-950/50 rounded-2xl border border-white/5">
-                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Quiet Hours End</h4>
+                <div
+                    class="p-5 bg-slate-950/50 rounded-2xl border border-white/5 text-center hover:bg-white/5 transition-colors">
+                    <h4 class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Quiet End</h4>
                     <input type="text" value="{{ config.anomalies.time_end }}"
-                        class="w-full px-4 py-2 bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                        class="w-full px-2 py-2 text-center bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-rose-500 focus:outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]">
                 </div>
             </div>
 
-            <div class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
+            <div
+                class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
                 <div>
-                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Velocity Limit</h4>
-                    <p class="text-xs text-slate-500 font-bold">Max Small Trx per Hour</p>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Velocity Limit
+                    </h4>
+                    <p class="text-xs text-slate-300 font-medium">Max Small Trx / Hr</p>
                 </div>
                 <input type="number" value="{{ config.anomalies.small_trx_limit }}"
-                    class="w-24 px-4 py-2 text-right bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-rose-500 focus:outline-none transition-all">
+                    class="w-20 px-3 py-2 text-center bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-rose-500 focus:outline-none transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]">
             </div>
         </div>
     </div>
 
     <!-- Contextual Profiles -->
-    <div class="bg-slate-900/40 backdrop-blur-xl p-8 rounded-[3rem] shadow-2xl border border-white/5 relative overflow-hidden group">
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-teal-500/10 blur-[60px] rounded-full group-hover:bg-teal-500/20 transition-colors"></div>
-        <h3 class="flex items-center gap-3 text-xl font-black text-white pb-6 mb-6 border-b border-white/5 tracking-tighter">
-            <i data-lucide="user-check" class="h-6 w-6 text-teal-400"></i> Identity Guardianship
+    <div
+        class="bg-slate-900/40 backdrop-blur-2xl p-8 md:p-10 rounded-3xl shadow-2xl border border-white/5 relative overflow-hidden group">
+        <div
+            class="absolute -top-16 -right-16 w-48 h-48 bg-teal-500/10 blur-[50px] rounded-full group-hover:bg-teal-500/20 transition-colors">
+        </div>
+        <h3
+            class="flex items-center gap-4 text-2xl font-black text-white pb-6 mb-8 border-b border-white/5 tracking-tight relative z-10">
+            <div class="bg-teal-500/10 p-2.5 rounded-xl border border-teal-500/20">
+                <i data-lucide="user-check" class="h-6 w-6 text-teal-400"></i>
+            </div>
+            Identity Guard
         </h3>
 
-        <div class="space-y-4">
-            <div class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
+        <div class="space-y-4 relative z-10">
+            <div
+                class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
                 <div>
-                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Dormancy Trigger</h4>
-                    <p class="text-xs text-slate-500 font-bold">Inactivity Limit (Days)</p>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Dormancy</h4>
+                    <p class="text-xs text-slate-300 font-medium">Inactivity Limit (Days)</p>
                 </div>
                 <input type="number" value="80"
-                    class="w-24 px-4 py-2 text-right bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all">
+                    class="w-20 px-3 py-2 text-center bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]">
             </div>
 
-            <div class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
+            <div
+                class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
                 <div>
-                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Identity Overlap</h4>
-                    <p class="text-xs text-slate-500 font-bold">Strict Matching Attributes</p>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Identity Overlap
+                    </h4>
+                    <p class="text-xs text-slate-300 font-medium">Strict Attributes</p>
                 </div>
                 <input type="number" value="2"
-                    class="w-24 px-4 py-2 text-right bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all">
+                    class="w-20 px-3 py-2 text-center bg-slate-900 border border-white/10 rounded-xl text-sm font-bold text-white focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]">
             </div>
 
-            <div class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 group/row">
+            <div
+                class="flex justify-between items-center p-5 bg-slate-950/50 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
                 <div>
-                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Watchlist Mirror</h4>
-                    <p class="text-xs text-slate-500 font-bold">Distributed Redis Sync</p>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Watchlist Mirror
+                    </h4>
+                    <p class="text-xs text-slate-300 font-medium">Cache Sync</p>
                 </div>
-                <span class="px-3 py-1 bg-teal-500/10 text-teal-400 text-[10px] font-black rounded-full border border-teal-500/20 uppercase tracking-widest">Synced</span>
+                <span
+                    class="px-4 py-1.5 bg-teal-500/10 text-teal-400 text-[9px] font-black rounded-lg border border-teal-500/20 uppercase tracking-widest shadow-sm">Synced</span>
             </div>
         </div>
     </div>
