@@ -161,25 +161,67 @@ def api_simulate_account():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    # Menyiapkan statistik simulasi untuk Fraud Detection Engine
     stats = {
-        "total_scanned": 1250,
-        "high_risk": 12,
-        "pending_review": 5,
-        "iso_messages": 842 
+        "total_alerts": 75,
+        "active_rules": "8/12",
+        "high_risk": 23,
+        "resolution_rate": "76%" 
     }
 
-    recent_alerts = [
-        {"time": "15:20", "type": "High Risk", "desc": "Multiple rapid transactions - User ID: 9942"},
-        {"time": "15:12", "type": "Anomaly", "desc": "Geo-fencing breach detected - IP: 103.x.x.x"},
-        {"time": "14:55", "type": "Compliance", "desc": "ISO 20022 message structure warning"}
+    alerts_by_category = [
+        {"name": "Repeated Small Transactions to One Account", "count": 39},
+        {"name": "Time Anomaly (Fixed Threshold)", "count": 18},
+        {"name": "Recency Anomaly", "count": 8},
+        {"name": "Monetary Anomaly (Fixed Threshold)", "count": 4},
+        {"name": "Fraud ID", "count": 3},
+        {"name": "Time and Value Anomaly", "count": 2},
+        {"name": "Time Anomaly (Adaptive Threshold)", "count": 1},
+    ]
+
+    latest_alerts = [
+        {"id": "ee8c6180", "time": "Aug 09, 2025 00:00:00", "acc": "NC45", "cat": "Time Anomaly (Fixed Threshold)", "trx": 1, "amt": "Rp 105.34 Mn", "risk": 86},
+        {"id": "ah8dba27", "time": "Aug 09, 2025 00:00:00", "acc": "NC45", "cat": "Monetary Anomaly (Fixed Threshold)", "trx": 2, "amt": "Rp 155.78 Mn", "risk": 156},
+        {"id": "df381bac", "time": "Aug 09, 2025 00:00:00", "acc": "NC45", "cat": "Fraud ID", "trx": 0, "amt": "Rp 0", "risk": 0},
+        {"id": "ade5af93", "time": "Aug 09, 2025 00:00:00", "acc": "NC45", "cat": "Time Anomaly (Fixed Threshold)", "trx": 1, "amt": "Rp 140.10 Mn", "risk": 18},
+        {"id": "82a210c0", "time": "Aug 09, 2025 00:00:00", "acc": "NC45", "cat": "Monetary Anomaly (Fixed Threshold)", "trx": 1, "amt": "Rp 140.10 Mn", "risk": 140},
     ]
 
     return render_template('dashboard.html',
                            name=session['full_name'],
                            roles=session['roles'],
                            stats=stats,
-                           alerts=recent_alerts)
+                           alerts_by_category=alerts_by_category,
+                           latest_alerts=latest_alerts)
+
+@app.route('/alert_entries')
+@login_required
+def alert_entries():
+    return render_template('alert_entries.html', name=session.get('full_name', 'Security Officer'), roles=session.get('roles', []))
+
+@app.route('/logic')
+@login_required
+def logic():
+    return render_template('logic_management.html', name=session.get('full_name', 'Security Officer'), roles=session.get('roles', []))
+
+@app.route('/watchlist')
+@login_required
+def watchlist():
+    return render_template('watchlist.html', name=session.get('full_name', 'Security Officer'), roles=session.get('roles', []))
+
+@app.route('/workflow')
+@login_required
+def workflow():
+    return render_template('workflow.html', name=session.get('full_name', 'Security Officer'), roles=session.get('roles', []))
+
+@app.route('/users')
+@login_required
+def users():
+    return render_template('user_management.html', name=session.get('full_name', 'Security Officer'), roles=session.get('roles', []))
+
+@app.route('/audit')
+@login_required
+def audit():
+    return render_template('audit_log.html', name=session.get('full_name', 'Security Officer'), roles=session.get('roles', []))
 
 @app.route('/investigation')
 @login_required
