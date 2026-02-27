@@ -35,9 +35,9 @@ def init_db():
             db.create_collection(col, edge=True)
             print(f">>> Edge Collection {col} created.")
 
-    # 5. Seed Roles (Maker-Checker-Validator-Auditor-Admin)
+    # 5. Seed Roles (Maker-Checker-Validator-Auditor-Admin-Reviewer)
     # Sesuai rencana RBAC yang lo minta
-    roles = ['super_admin', 'maker', 'checker', 'validator', 'auditor']
+    roles = ['super_admin', 'maker', 'checker', 'validator', 'auditor', 'reviewer']
     for r in roles:
         if not db.collection('roles').get(r):
             db.collection('roles').insert({'_key': r, 'role_name': r.upper()})

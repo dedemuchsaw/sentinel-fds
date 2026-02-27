@@ -8,9 +8,67 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        theme: {
+                            bg: 'var(--bg-primary)',
+                            secondary: 'var(--bg-secondary)',
+                            card: 'var(--bg-card)',
+                            sidebar: 'var(--bg-sidebar)',
+                            text: 'var(--text-primary)',
+                            muted: 'var(--text-secondary)',
+                            border: 'var(--border)',
+                            input: 'var(--input-bg)',
+                            hover: 'var(--hover)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        // Check local storage for theme
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <style>
+        :root {
+            /* Light theme */
+            --bg-primary: #F8FAFC;
+            --bg-secondary: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --bg-sidebar: #F1F5F9;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border: #E2E8F0;
+            --input-bg: #FFFFFF;
+            --hover: #E2E8F0;
+            color-scheme: light;
+        }
+
+        :root.dark {
+            /* Dark theme */
+            --bg-primary: #0F172A;
+            --bg-secondary: #1E293B;
+            --bg-card: #1E293B;
+            --bg-sidebar: #0F172A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #94A3B8;
+            --border: #334155;
+            --input-bg: #334155;
+            --hover: #2D3A4F;
+            color-scheme: dark;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
         }
@@ -36,7 +94,7 @@
 </head>
 
 <body
-    class="bg-[#030610] text-[#E0E2E8] min-h-screen selection:bg-blue-500/30 flex font-sans antialiased overflow-hidden relative z-0">
+    class="bg-theme-bg text-theme-text min-h-screen selection:bg-blue-500/30 flex font-sans antialiased overflow-hidden relative z-0 transition-colors duration-300">
 
     <!-- Ambient Symmetrical Background -->
     <div class="fixed inset-0 pointer-events-none flex justify-center z-[-1] overflow-hidden">
@@ -50,15 +108,15 @@
 
     <!-- Sidebar Navigation -->
     <aside
-        class="w-64 h-screen border-r border-white/5 bg-slate-900/40 backdrop-blur-xl flex flex-col flex-shrink-0 z-50 transition-all">
+        class="w-64 h-screen border-r border-theme-border bg-theme-sidebar flex flex-col flex-shrink-0 z-50 transition-all duration-300">
         <!-- Brand -->
-        <div class="h-20 flex items-center gap-3 px-6 border-b border-white/5 w-full">
+        <div class="h-20 flex items-center gap-3 px-6 border-b border-theme-border w-full">
             <div
                 class="relative flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/20 to-transparent border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
                 <i data-lucide="shield-check" class="h-4 w-4 text-blue-400"></i>
             </div>
             <div class="flex flex-col flex-1">
-                <span class="font-black text-base tracking-tight text-white leading-none">Sentinel</span>
+                <span class="font-black text-base tracking-tight text-theme-text leading-none">Sentinel</span>
                 <span class="text-[8px] text-blue-400 font-extrabold uppercase tracking-[0.2em] mt-0.5 opacity-80">FDS
                     Engine</span>
             </div>
@@ -91,10 +149,13 @@
                 <i data-lucide="git-merge" class="h-4 w-4"></i> Workflow Approval
             </a>
 
+            {% if 'super_admin' in roles or 'auditor' in roles %}
             <a href="/users"
                 class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 {% if request.path == '/users' %}bg-blue-500/10 text-white shadow-[inset_2px_0_0_0_rgba(59,130,246,1)]{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">
                 <i data-lucide="users" class="h-4 w-4"></i> User Management
             </a>
+            {% endif %}
+
 
             <a href="/audit"
                 class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 {% if request.path == '/audit' %}bg-blue-500/10 text-white shadow-[inset_2px_0_0_0_rgba(59,130,246,1)]{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">
@@ -110,7 +171,7 @@
         </nav>
 
         <!-- Connection Status in Sidebar -->
-        <div class="p-4 border-t border-white/5">
+        <div class="p-4 border-t border-theme-border">
             <a href="/logout"
                 class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors mb-2">
                 <i data-lucide="log-out" class="h-4 w-4"></i> Secure Logout
@@ -132,7 +193,7 @@
 
         <!-- Top Header -->
         <header
-            class="h-20 shrink-0 border-b border-white/5 bg-slate-900/20 backdrop-blur-md flex items-center justify-between px-8 z-40 sticky top-0">
+            class="h-20 shrink-0 border-b border-theme-border bg-theme-bg/80 backdrop-blur-md flex items-center justify-between px-8 z-40 sticky top-0 transition-colors duration-300">
             <!-- Breadcrumb Placeholder -->
             <div>
                 <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
@@ -144,9 +205,16 @@
 
             <!-- Profile Area -->
             <div class="flex items-center gap-6">
+                <!-- Theme Toggle -->
+                <button id="themeToggle"
+                    class="text-theme-muted hover:text-theme-text transition-colors p-2 rounded-xl hover:bg-theme-hover">
+                    <i data-lucide="moon" class="h-5 w-5 hidden dark:block"></i>
+                    <i data-lucide="sun" class="h-5 w-5 block dark:hidden"></i>
+                </button>
+
                 <div class="flex items-center gap-4 group relative">
                     <div class="text-right">
-                        <p class="text-xs font-bold text-white leading-none mb-1">{{ name }}</p>
+                        <p class="text-xs font-bold text-theme-text leading-none mb-1">{{ name }}</p>
                         <p class="text-[9px] text-blue-400 font-black tracking-tighter uppercase opacity-70">{{
                             roles[0] if roles else 'OFFICER' }}</p>
                     </div>
@@ -165,7 +233,7 @@
             </div>
             <!-- Footer -->
             <footer class="w-full py-8 mt-auto z-10 text-center">
-                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Sentinel Fraud Detection
+                <p class="text-[10px] text-theme-muted font-bold uppercase tracking-widest">Sentinel Fraud Detection
                     System &copy;
                     2026</p>
             </footer>
@@ -175,6 +243,17 @@
     <!-- Base Scripts -->
     <script>
         lucide.createIcons();
+
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            if (document.documentElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
 
         // Click outside dropdown to close
         document.addEventListener('click', function (event) {

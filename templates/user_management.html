@@ -6,17 +6,347 @@
 {% block content %}
 <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
     <div>
-        <h1 class="text-3xl font-black text-white tracking-tight mb-2">User Management</h1>
-        <p class="text-slate-400 text-sm font-medium">Manage system users, roles, and access controls</p>
+        <h1 class="text-3xl font-black text-theme-text tracking-tight mb-2">User Management</h1>
+        <p class="text-theme-muted text-sm font-medium">Manage system users, roles, and access controls</p>
+    </div>
+    <div class="flex items-center gap-4">
+        {% if 'super_admin' in roles %}
+        <button onclick="openModal('userModal')"
+            class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors shadow-lg shadow-blue-500/20">
+            <i data-lucide="user-plus" class="h-4 w-4"></i> Add User
+        </button>
+        {% endif %}
+        <button onclick="exportCSV()"
+            class="bg-theme-secondary hover:bg-theme-hover text-theme-text px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors border border-theme-border">
+            <i data-lucide="download" class="h-4 w-4"></i> Export CSV
+        </button>
     </div>
 </div>
 
+<!-- Filters -->
 <div
-    class="bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-3xl shadow-xl p-8 lg:p-12 min-h-[500px] flex items-center justify-center">
-    <div class="text-center">
-        <i data-lucide="users" class="h-16 w-16 text-slate-700 mx-auto mb-4"></i>
-        <h2 class="text-xl font-bold text-white mb-2">User Management Module</h2>
-        <p class="text-slate-400">This module is under construction.</p>
+    class="bg-theme-card border border-theme-border rounded-3xl p-6 mb-8 flex flex-wrap gap-4 items-center shadow-sm transition-colors duration-300">
+    <div class="relative flex-1 min-w-[200px]">
+        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-theme-muted"></i>
+        <input type="text" id="searchInput" placeholder="Search users..."
+            class="w-full bg-theme-input border border-theme-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-theme-text placeholder-theme-muted focus:outline-none focus:border-blue-500 transition-colors">
+    </div>
+    <select id="roleFilter"
+        class="bg-theme-input border border-theme-border rounded-xl px-4 py-2.5 text-sm text-theme-text focus:outline-none focus:border-blue-500 transition-colors appearance-none">
+        <option value="">All Roles</option>
+        <option value="super_admin">Super Admin</option>
+        <option value="maker">Maker</option>
+        <option value="checker">Checker</option>
+        <option value="validator">Validator</option>
+        <option value="auditor">Auditor</option>
+        <option value="reviewer">Reviewer</option>
+    </select>
+    <select id="statusFilter"
+        class="bg-theme-input border border-theme-border rounded-xl px-4 py-2.5 text-sm text-theme-text focus:outline-none focus:border-blue-500 transition-colors appearance-none">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+    </select>
+    <button onclick="fetchUsers()"
+        class="px-4 py-2.5 bg-theme-hover hover:bg-theme-border rounded-xl text-theme-text transition-colors">
+        <i data-lucide="filter" class="h-4 w-4"></i>
+    </button>
+</div>
+
+<!-- Data Table -->
+<div
+    class="bg-theme-card border border-theme-border rounded-3xl shadow-xl overflow-hidden transition-colors duration-300">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse whitespace-nowrap">
+            <thead>
+                <tr class="border-b border-theme-border bg-theme-secondary">
+                    <th class="py-4 px-6 text-[10px] font-black text-theme-muted uppercase tracking-widest">Username
+                    </th>
+                    <th class="py-4 px-6 text-[10px] font-black text-theme-muted uppercase tracking-widest">Full Name
+                    </th>
+                    <th class="py-4 px-6 text-[10px] font-black text-theme-muted uppercase tracking-widest">Roles</th>
+                    <th class="py-4 px-6 text-[10px] font-black text-theme-muted uppercase tracking-widest">Status</th>
+                    <th class="py-4 px-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-right">
+                        Actions</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody" class="divide-y divide-theme-border text-sm">
+                <tr>
+                    <td colspan="5" class="py-8 text-center text-theme-muted">Loading users...</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
+
+<!-- Add/Edit User Modal -->
+<div id="userModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+    <div
+        class="bg-theme-card border border-theme-border rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+        <div class="p-6 border-b border-theme-border flex justify-between items-center">
+            <h3 id="modalTitle" class="text-xl font-bold text-theme-text">Add New User</h3>
+            <button onclick="closeModal('userModal')" class="text-theme-muted hover:text-theme-text transition-colors">
+                <i data-lucide="x" class="h-5 w-5"></i>
+            </button>
+        </div>
+        <div class="p-6">
+            <form id="userForm" onsubmit="saveUser(event)">
+                <input type="hidden" id="editKey">
+
+                <div class="space-y-4">
+                    <div>
+                        <label
+                            class="block text-xs font-bold text-theme-muted uppercase tracking-wider mb-2">Username</label>
+                        <input type="text" id="formUsername" required
+                            class="w-full bg-theme-input border border-theme-border rounded-xl px-4 py-2.5 text-sm text-theme-text focus:outline-none focus:border-blue-500 transition-colors">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-theme-muted uppercase tracking-wider mb-2">Full
+                            Name</label>
+                        <input type="text" id="formFullName" required
+                            class="w-full bg-theme-input border border-theme-border rounded-xl px-4 py-2.5 text-sm text-theme-text focus:outline-none focus:border-blue-500 transition-colors">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-theme-muted uppercase tracking-wider mb-2">Password
+                            <span id="pwdHint" class="text-theme-muted opacity-70 font-normal lowercase">(leave blank to
+                                keep current)</span></label>
+                        <input type="password" id="formPassword"
+                            class="w-full bg-theme-input border border-theme-border rounded-xl px-4 py-2.5 text-sm text-theme-text focus:outline-none focus:border-blue-500 transition-colors">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-theme-muted uppercase tracking-wider mb-2">Primary
+                            Role</label>
+                        <select id="formRole" required
+                            class="w-full bg-theme-input border border-theme-border rounded-xl px-4 py-2.5 text-sm text-theme-text focus:outline-none focus:border-blue-500 transition-colors appearance-none">
+                            <option value="maker">Maker</option>
+                            <option value="checker">Checker</option>
+                            <option value="validator">Validator</option>
+                            <option value="auditor">Auditor</option>
+                            <option value="reviewer">Reviewer</option>
+                            <option value="super_admin">Super Admin</option>
+                        </select>
+                    </div>
+
+                    <div id="statusDiv" class="hidden">
+                        <label
+                            class="block text-xs font-bold text-theme-muted uppercase tracking-wider mb-2">Status</label>
+                        <select id="formStatus"
+                            class="w-full bg-theme-input border border-theme-border rounded-xl px-4 py-2.5 text-sm text-theme-text focus:outline-none focus:border-blue-500 transition-colors appearance-none">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end gap-3">
+                    <button type="button" onclick="closeModal('userModal')"
+                        class="px-5 py-2.5 rounded-xl text-sm font-bold text-theme-text bg-theme-secondary hover:bg-theme-hover border border-theme-border transition-colors">Cancel</button>
+                    <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-lg shadow-blue-500/20">Save
+                        User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const API_TOKEN = "{{ jwt_token }}";
+    const HEADERS = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_TOKEN}`
+    };
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchUsers();
+
+        // Setup search debounce
+        let timeout = null;
+        document.getElementById('searchInput').addEventListener('input', () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(fetchUsers, 500);
+        });
+
+        document.getElementById('roleFilter').addEventListener('change', fetchUsers);
+        document.getElementById('statusFilter').addEventListener('change', fetchUsers);
+    });
+
+    function getRoleBadgeColor(role) {
+        const colors = {
+            'super_admin': 'bg-fuchsia-500/10 text-fuchsia-500 border-fuchsia-500/20 dark:bg-fuchsia-500/20 dark:text-fuchsia-400',
+            'auditor': 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400',
+            'validator': 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:bg-indigo-500/20 dark:text-indigo-400',
+            'checker': 'bg-amber-500/10 text-amber-600 border-amber-500/20 dark:bg-amber-500/20 dark:text-amber-400',
+            'maker': 'bg-blue-500/10 text-blue-600 border-blue-500/20 dark:bg-blue-500/20 dark:text-blue-400',
+            'reviewer': 'bg-cyan-500/10 text-cyan-600 border-cyan-500/20 dark:bg-cyan-500/20 dark:text-cyan-400'
+        };
+        return colors[role] || 'bg-slate-500/10 text-slate-600 border-slate-500/20 dark:bg-slate-500/20 dark:text-slate-400';
+    }
+
+    async function fetchUsers() {
+        const search = document.getElementById('searchInput').value;
+        const role = document.getElementById('roleFilter').value;
+        const status = document.getElementById('statusFilter').value;
+
+        let url = '/api/users?';
+        if (search) url += `search=${encodeURIComponent(search)}&`;
+        if (role) url += `role=${encodeURIComponent(role)}&`;
+        if (status) url += `status=${encodeURIComponent(status)}&`;
+
+        try {
+            const res = await fetch(url, { headers: HEADERS });
+            if (!res.ok) throw new Error("Failed to fetch");
+            const data = await res.json();
+            renderTable(data);
+        } catch (err) {
+            console.error(err);
+            document.getElementById('userTableBody').innerHTML = `<tr><td colspan="5" class="py-8 text-center text-rose-500">Error loading users.</td></tr>`;
+        }
+    }
+
+    function renderTable(users) {
+        const tbody = document.getElementById('userTableBody');
+        tbody.innerHTML = '';
+
+        if (users.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-theme-muted">No users found.</td></tr>`;
+            return;
+        }
+
+        users.forEach(u => {
+            const roleBadges = u.roles.map(r =>
+                `<span class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-wider border ${getRoleBadgeColor(r)}">${r.replace('_', ' ')}</span>`
+            ).join(' ');
+
+            const statusBadge = u.status === 'active'
+                ? '<span class="text-emerald-500 dark:text-emerald-400 text-xs font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active</span>'
+                : '<span class="text-theme-muted text-xs font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-theme-muted"></span> Inactive</span>';
+
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-theme-hover transition-colors';
+
+            let actions = '';
+            {% if 'super_admin' in roles %}
+            actions = `
+                <button onclick='openEditModal(${JSON.stringify(u)})' class="text-theme-muted hover:text-theme-text transition-colors p-2 bg-theme-bg rounded-lg border border-theme-border hover:bg-theme-hover">
+                    <i data-lucide="edit-2" class="h-3.5 w-3.5"></i>
+                </button>
+            `;
+            {% endif %}
+
+            tr.innerHTML = `
+                <td class="py-4 px-6 font-mono text-theme-text text-xs tracking-wider">${u.username}</td>
+                <td class="py-4 px-6 font-semibold text-theme-text text-sm">${u.full_name || '-'}</td>
+                <td class="py-4 px-6 flex items-center gap-1.5">${roleBadges}</td>
+                <td class="py-4 px-6">${statusBadge}</td>
+                <td class="py-4 px-6 text-right">${actions}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        lucide.createIcons();
+    }
+
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+        document.getElementById(id).classList.add('flex');
+
+        // Reset form for create
+        document.getElementById('userForm').reset();
+        document.getElementById('editKey').value = '';
+        document.getElementById('modalTitle').innerText = 'Add New User';
+        document.getElementById('formUsername').readOnly = false;
+        document.getElementById('formUsername').classList.remove('opacity-50');
+        document.getElementById('formPassword').required = true;
+        document.getElementById('pwdHint').classList.add('hidden');
+        document.getElementById('statusDiv').classList.add('hidden');
+    }
+
+    function openEditModal(user) {
+        openModal('userModal');
+        document.getElementById('editKey').value = user.key;
+        document.getElementById('modalTitle').innerText = 'Edit User';
+
+        document.getElementById('formUsername').value = user.username;
+        document.getElementById('formUsername').readOnly = true;
+        document.getElementById('formUsername').classList.add('opacity-50');
+
+        document.getElementById('formFullName').value = user.full_name;
+        document.getElementById('formRole').value = user.roles[0] || 'viewer';
+        document.getElementById('formStatus').value = user.status || 'active';
+
+        document.getElementById('formPassword').required = false;
+        document.getElementById('pwdHint').classList.remove('hidden');
+        document.getElementById('statusDiv').classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+        document.getElementById(id).classList.remove('flex');
+    }
+
+    async function saveUser(e) {
+        e.preventDefault();
+
+        const key = document.getElementById('editKey').value;
+        const payload = {
+            username: document.getElementById('formUsername').value,
+            full_name: document.getElementById('formFullName').value,
+            roles: [document.getElementById('formRole').value]
+        };
+
+        const pwd = document.getElementById('formPassword').value;
+        if (pwd) payload.password = pwd;
+
+        if (key) {
+            payload.status = document.getElementById('formStatus').value;
+        }
+
+        const method = key ? 'PUT' : 'POST';
+        const url = key ? `/api/users/${key}` : `/api/users`;
+
+        try {
+            const res = await fetch(url, {
+                method: method,
+                headers: HEADERS,
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.error || 'Failed to save');
+
+            closeModal('userModal');
+            fetchUsers();
+        } catch (err) {
+            alert("Error: " + err.message);
+        }
+    }
+
+    function exportCSV() {
+        fetch('/api/users/export', { headers: HEADERS })
+            .then(res => {
+                if (!res.ok) throw new Error("Could not export");
+                return res.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'users_export.csv';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(err => alert(err.message));
+    }
+
+</script>
 {% endblock %}

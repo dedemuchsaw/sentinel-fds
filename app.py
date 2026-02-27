@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from arango import ArangoClient
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
 from flask_socketio import SocketIO
 from database.redis_client import get_redis_client
@@ -9,7 +9,11 @@ import json
 import uuid
 import datetime
 import random
+import io
+import csv
+from flask import Response
 from engine.pipeline import process_transaction, process_account_event
+from engine.security import generate_token, role_required
 
 app = Flask(__name__)
 # Gunakan key statis dulu agar session gak reset tiap kali venv restart
@@ -95,13 +99,17 @@ def auth():
                 cursor = db.aql.execute(query, bind_vars={'user_id': user['_id']})
                 roles = [doc for doc in cursor]
 
-                print(f"[AUTH SUCCESS] Verified Roles: {roles}")
+            # Generate JWT
+            token = generate_token(username, roles)
 
-                # Set session data
-                session['user'] = username
-                session['full_name'] = user.get('full_name', 'Security Officer')
-                session['roles'] = roles
-                return redirect(url_for('dashboard'))
+            print(f"[AUTH SUCCESS] Verified Roles: {roles}")
+
+            # Set session data
+            session['user'] = username
+            session['full_name'] = user.get('full_name', 'Security Officer')
+            session['roles'] = roles
+            session['jwt_token'] = token
+            return redirect(url_for('dashboard'))
             else:
                 print("[AUTH FAIL] Password mismatch")
         else:
@@ -216,7 +224,141 @@ def workflow():
 @app.route('/users')
 @login_required
 def users():
-    return render_template('user_management.html', name=session.get('full_name', 'Security Officer'), roles=session.get('roles', []))
+    return render_template('user_management.html', name=session.get('full_name', 'Security Officer'), roles=session.get('roles', []), jwt_token=session.get('jwt_token', ''))
+
+# --- USER MANAGEMENT APIs ---
+@app.route('/api/users', methods=['GET'])
+@role_required('super_admin', 'auditor', 'reviewer')
+def api_get_users():
+    status = request.args.get('status')
+    role = request.args.get('role')
+    search = request.args.get('search')
+    
+    aql = """
+    FOR u IN users
+        LET u_roles = (
+            FOR r IN 1..1 OUTBOUND u has_role
+            RETURN r._key
+        )
+        RETURN {
+            key: u._key,
+            username: u.username,
+            full_name: u.full_name,
+            status: u.status,
+            roles: u_roles,
+            last_login: u.last_login
+        }
+    """
+    users_list = [doc for doc in db.aql.execute(aql)]
+    
+    if status:
+        users_list = [u for u in users_list if u.get('status', 'active') == status]
+    if role:
+        users_list = [u for u in users_list if role in u.get('roles', [])]
+    if search:
+        s = search.lower()
+        users_list = [u for u in users_list if s in u['username'].lower() or s in u.get('full_name', '').lower()]
+        
+    return jsonify(users_list)
+
+@app.route('/api/users', methods=['POST'])
+@role_required('super_admin')
+def api_create_user():
+    data = request.json
+    username = data.get('username')
+    full_name = data.get('full_name')
+    password = data.get('password')
+    roles = data.get('roles', ['viewer'])
+    
+    if not username or not password:
+        return jsonify({"error": "Username and password required"}), 400
+        
+    user_key = f"admin_{username}"
+    if db.collection('users').get(user_key):
+        return jsonify({"error": "User already exists"}), 400
+        
+    user_data = {
+        '_key': user_key,
+        'username': username,
+        'full_name': full_name,
+        'password': generate_password_hash(password),
+        'status': 'active'
+    }
+    
+    try:
+        db.collection('users').insert(user_data)
+        for r in roles:
+            if not db.collection('roles').get(r):
+                continue
+            db.collection('has_role').insert({
+                '_from': f"users/{user_key}",
+                '_to': f"roles/{r}"
+            })
+        return jsonify({"message": "User created successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/users/<key>', methods=['PUT'])
+@role_required('super_admin')
+def api_update_user(key):
+    data = request.json
+    user = db.collection('users').get(key)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+        
+    updates = {}
+    if 'full_name' in data:
+        updates['full_name'] = data['full_name']
+    if 'status' in data:
+        updates['status'] = data['status']
+    if 'password' in data and data['password']:
+        updates['password'] = generate_password_hash(data['password'])
+        
+    if updates:
+        updates['_key'] = key
+        db.collection('users').update(updates)
+        
+    if 'roles' in data:
+        db.aql.execute("FOR e IN has_role FILTER e._from == @user_id REMOVE e IN has_role", bind_vars={'user_id': f"users/{key}"})
+        for r in data['roles']:
+            if db.collection('roles').get(r):
+                db.collection('has_role').insert({
+                    '_from': f"users/{key}",
+                    '_to': f"roles/{r}"
+                })
+                
+    return jsonify({"message": "User updated successfully"})
+
+@app.route('/api/users/export', methods=['GET'])
+@role_required('super_admin', 'auditor', 'reviewer')
+def api_export_users():
+    aql = """
+    FOR u IN users
+        LET u_roles = (
+            FOR r IN 1..1 OUTBOUND u has_role
+            RETURN r._key
+        )
+        RETURN {
+            username: u.username,
+            full_name: u.full_name,
+            status: u.status,
+            roles: CONCAT_SEPARATOR(",", u_roles)
+        }
+    """
+    users_list = [doc for doc in db.aql.execute(aql)]
+    
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['Username', 'Full Name', 'Status', 'Roles'])
+    for u in users_list:
+        writer.writerow([u['username'], u['full_name'], u.get('status', 'active'), u['roles']])
+        
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-disposition": "attachment; filename=users_export.csv"}
+    )
+
 
 @app.route('/audit')
 @login_required
