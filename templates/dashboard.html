@@ -4,123 +4,143 @@
 {% block breadcrumb %}Dashboard Overview{% endblock %}
 
 {% block content %}
-<div class="mb-8">
-    <h1 class="text-3xl font-bold text-white mb-2">Dashboard</h1>
-    <p class="text-slate-400 font-medium">Real-time fraud detection insights and analytics</p>
+<div class="mb-10">
+    <h1 class="text-4xl font-black text-white mb-2 tracking-tighter">Command Center</h1>
+    <p class="text-slate-400 font-semibold tracking-wide flex items-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+        Live Fraud Surveillance Logic & Analytics
+    </p>
 </div>
 
 <!-- Filters -->
-<div class="flex gap-6 mb-8 items-center bg-slate-900 p-4 rounded-xl shadow-md border border-slate-800">
-    <div class="flex items-center gap-3">
-        <span class="text-sm font-semibold text-slate-300">Category:</span>
+<div class="flex gap-8 mb-10 items-center bg-white/5 backdrop-blur-xl p-6 rounded-[2rem] shadow-2xl border border-white/5">
+    <div class="flex items-center gap-4">
+        <span class="text-xs font-black text-slate-500 uppercase tracking-widest">Target Filter</span>
         <div
-            class="flex items-center justify-between border border-slate-700 rounded-lg px-4 py-2 w-64 bg-slate-950 cursor-pointer hover:bg-slate-800 transition">
-            <span class="text-sm text-slate-400">All Categories</span>
-            <i data-lucide="chevron-down" class="h-4 w-4 text-slate-500"></i>
+            class="flex items-center justify-between border border-white/10 rounded-2xl px-5 py-3 w-72 bg-slate-900/50 cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
+            <span class="text-xs font-bold text-slate-300 group-hover:text-white transition-colors">Global Transaction Flow</span>
+            <i data-lucide="chevron-down" class="h-4 w-4 text-slate-500 group-hover:text-blue-400 transition-colors"></i>
         </div>
     </div>
 
-    <div class="flex items-center gap-3">
-        <span class="text-sm font-semibold text-slate-300">Date Range:</span>
+    <div class="flex items-center gap-4">
+        <span class="text-xs font-black text-slate-500 uppercase tracking-widest">Time Horizon</span>
         <div
-            class="flex items-center gap-3 border border-slate-700 rounded-lg px-4 py-2 bg-slate-950 cursor-pointer hover:bg-slate-800 transition">
-            <span class="text-sm text-slate-400">2026-02-18 &rarr; 2026-03-18</span>
-            <i data-lucide="calendar" class="h-4 w-4 text-slate-500"></i>
+            class="flex items-center gap-4 border border-white/10 rounded-2xl px-5 py-3 bg-slate-900/50 cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
+            <span class="text-xs font-bold text-slate-300 group-hover:text-white transition-colors">Last 24 Hours Metrics</span>
+            <i data-lucide="calendar" class="h-4 w-4 text-slate-500 group-hover:text-blue-400 transition-colors"></i>
         </div>
     </div>
 </div>
 
 <!-- Stats Grid -->
-<div class="grid grid-cols-4 gap-6 mb-8">
+<div class="grid grid-cols-4 gap-8 mb-10">
     <!-- Card 1 -->
     <div
-        class="bg-slate-900 p-6 rounded-xl shadow-md border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
-        <p class="text-sm font-medium text-slate-400 mb-4">Total Scanned</p>
-        <div class="flex items-center gap-4">
-            <div class="bg-blue-500/10 p-3 rounded-lg border border-blue-500/20">
-                <i data-lucide="activity" class="h-8 w-8 text-blue-400"></i>
-            </div>
+        class="relative group bg-slate-900/40 backdrop-blur-md p-8 rounded-[2.5rem] shadow-xl border border-white/5 overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:bg-blue-600/5 hover:border-blue-500/20">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 blur-[50px] rounded-full group-hover:bg-blue-500/20 transition-colors"></div>
+        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Aggregate Scanned</p>
+        <div class="flex items-end justify-between">
             <div>
-                <h2 class="text-3xl font-bold text-white" id="stat_total_scanned">{{ stats.total_scanned }}</h2>
-                <p class="text-xs text-blue-400 font-bold mt-1 uppercase tracking-wider">Live Processing</p>
+                <h2 class="text-4xl font-black text-white leading-none tracking-tighter" id="stat_total_scanned">{{ stats.total_scanned }}</h2>
+                <div class="flex items-center gap-1.5 mt-3">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                    <p class="text-[10px] text-blue-400 font-black uppercase tracking-widest">High Vol Pulse</p>
+                </div>
+            </div>
+            <div class="bg-blue-500/10 p-4 rounded-[1.5rem] border border-blue-500/20">
+                <i data-lucide="zap" class="h-8 w-8 text-blue-400"></i>
             </div>
         </div>
     </div>
 
     <!-- Card 2 -->
     <div
-        class="bg-slate-900 p-6 rounded-xl shadow-md border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
-        <p class="text-sm font-medium text-slate-400 mb-4">ISO 20022 Messages</p>
-        <div class="flex items-center gap-4">
-            <div class="bg-indigo-500/10 p-3 rounded-lg border border-indigo-500/20">
-                <i data-lucide="file-json" class="h-8 w-8 text-indigo-400"></i>
-            </div>
+        class="relative group bg-slate-900/40 backdrop-blur-md p-8 rounded-[2.5rem] shadow-xl border border-white/5 overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:bg-indigo-600/5 hover:border-indigo-500/20">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 blur-[50px] rounded-full group-hover:bg-indigo-500/20 transition-colors"></div>
+        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6">ISO Wire Integrity</p>
+        <div class="flex items-end justify-between">
             <div>
-                <h2 class="text-3xl font-bold text-white">{{ stats.iso_messages }}</h2>
-                <p class="text-xs text-indigo-400 font-bold mt-1 uppercase tracking-wider">Parsed & Stored</p>
+                <h2 class="text-4xl font-black text-white leading-none tracking-tighter">{{ stats.iso_messages }}</h2>
+                <p class="text-[10px] text-indigo-400 font-black mt-3 uppercase tracking-widest flex items-center gap-1.5">
+                    <i data-lucide="check-circle" class="h-3 w-3"></i>
+                    Validated Nodes
+                </p>
+            </div>
+            <div class="bg-indigo-500/10 p-4 rounded-[1.5rem] border border-indigo-500/20">
+                <i data-lucide="file-json" class="h-8 w-8 text-indigo-400"></i>
             </div>
         </div>
     </div>
 
     <!-- Card 3 -->
     <div
-        class="bg-slate-900 p-6 rounded-xl shadow-md border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
-        <p class="text-sm font-medium text-slate-400 mb-4">High Risk Alerts</p>
-        <div class="flex items-center gap-4">
-            <div class="bg-rose-500/10 p-3 rounded-lg border border-rose-500/20">
-                <i data-lucide="bell-ring" class="h-8 w-8 text-rose-400"></i>
-            </div>
+        class="relative group bg-slate-900/40 backdrop-blur-md p-8 rounded-[2.5rem] shadow-xl border border-white/5 overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:bg-rose-600/5 hover:border-rose-500/20">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-rose-500/10 blur-[50px] rounded-full group-hover:bg-rose-500/20 transition-colors"></div>
+        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Critical Anomalies</p>
+        <div class="flex items-end justify-between">
             <div>
-                <h2 class="text-3xl font-bold text-rose-500">{{ stats.high_risk }}</h2>
-                <p class="text-xs text-rose-400 font-bold mt-1 uppercase tracking-wider">Needs Attention</p>
+                <h2 class="text-4xl font-black text-rose-500 leading-none tracking-tighter">{{ stats.high_risk }}</h2>
+                <div class="bg-rose-500/20 text-rose-400 text-[9px] font-black px-2 py-1 rounded-md mt-3 uppercase tracking-widest border border-rose-500/20 inline-block">
+                    Immediate Action
+                </div>
+            </div>
+            <div class="bg-rose-500/10 p-4 rounded-[1.5rem] border border-rose-500/20">
+                <i data-lucide="shield-alert" class="h-8 w-8 text-rose-400"></i>
             </div>
         </div>
     </div>
 
     <!-- Card 4 -->
     <div
-        class="bg-slate-900 p-6 rounded-xl shadow-md border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition">
-        <p class="text-sm font-medium text-slate-400 mb-4">Pending Review</p>
-        <div class="flex items-center gap-4">
-            <div class="bg-amber-500/10 p-3 rounded-lg border border-amber-500/20">
-                <i data-lucide="clock" class="h-8 w-8 text-amber-400"></i>
-            </div>
+        class="relative group bg-slate-900/40 backdrop-blur-md p-8 rounded-[2.5rem] shadow-xl border border-white/5 overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:bg-amber-600/5 hover:border-amber-500/20">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-500/10 blur-[50px] rounded-full group-hover:bg-amber-500/20 transition-colors"></div>
+        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Manual Overrides</p>
+        <div class="flex items-end justify-between">
             <div>
-                <h2 class="text-3xl font-bold text-amber-500">{{ stats.pending_review }}</h2>
-                <p class="text-xs text-amber-400 font-bold mt-1 uppercase tracking-wider">Awaiting Action</p>
+                <h2 class="text-4xl font-black text-amber-500 leading-none tracking-tighter">{{ stats.pending_review }}</h2>
+                <p class="text-[10px] text-amber-400 font-black mt-3 uppercase tracking-widest flex items-center gap-1.5">
+                    <i data-lucide="clock" class="h-3 w-3"></i>
+                    Awaiting Agent
+                </p>
+            </div>
+            <div class="bg-amber-500/10 p-4 rounded-[1.5rem] border border-amber-500/20">
+                <i data-lucide="terminal" class="h-8 w-8 text-amber-400"></i>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Real-time Alerts Panel -->
-<div class="bg-slate-900 border border-slate-800 rounded-xl shadow-md p-6 min-h-[400px]">
-    <div class="flex justify-between items-center mb-6">
-        <h3 class="font-semibold text-white flex items-center gap-2">
-            Security Events
-            <span class="relative flex h-3 w-3 inline-block ml-2">
-                <span
-                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
-            </span>
-        </h3>
+<div class="bg-slate-900/60 backdrop-blur-2xl border border-white/5 rounded-[3rem] shadow-3xl p-10 min-h-[500px]">
+    <div class="flex justify-between items-center mb-10">
+        <div>
+            <h3 class="text-xl font-black text-white flex items-center gap-3 tracking-tighter">
+                Intercepted Security Events
+                <span class="flex h-3 w-3 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+                </span>
+            </h3>
+            <p class="text-[11px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-2">Active Surveillance Stream</p>
+        </div>
         <button onclick="triggerSimulate()"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-lg hover:shadow-blue-500/20 border border-blue-500/20 flex items-center gap-2">
-            <i data-lucide="play" class="h-4 w-4"></i> Simulate Transaction
+            class="group bg-blue-600 hover:bg-blue-500 text-white px-8 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl hover:shadow-blue-500/20 border border-blue-400/20 flex items-center gap-3">
+            <i data-lucide="radio" class="h-4 w-4 group-hover:animate-pulse"></i> Generate Test Load
         </button>
     </div>
 
     <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse" id="alertsTable">
             <thead>
-                <tr class="border-b border-slate-800">
-                    <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Time</th>
-                    <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Alert Type</th>
-                    <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Risk Score</th>
-                    <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Description</th>
+                <tr class="border-b border-white/5">
+                    <th class="py-5 px-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Timestamp</th>
+                    <th class="py-5 px-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Threat Class</th>
+                    <th class="py-5 px-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Anom. Score</th>
+                    <th class="py-5 px-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Payload Context</th>
                 </tr>
             </thead>
-            <tbody class="text-sm divide-y divide-slate-800/50">
+            <tbody class="text-sm divide-y divide-white/5">
                 <!-- Alerts will be injected here -->
             </tbody>
         </table>
